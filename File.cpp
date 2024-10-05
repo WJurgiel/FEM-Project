@@ -2,6 +2,7 @@
 
 std::string WORKING_DIR = ".";
 std::string WORKING_FILE = "";
+bool IS_EXECUTED = false;
 
 std::unique_ptr<std::fstream> openFile(const std::string& _name) {
 	auto file = std::make_unique<std::fstream>();
@@ -27,13 +28,7 @@ std::vector<std::string> storeFileContent(std::unique_ptr<std::fstream>& _file) 
 	return fileContent;
 
 }
-void clearScreen() {
-#ifdef _WIN32
-	std::system("cls");
-#else
-	std::sytem("clear");
-#endif
-}
+
 std::vector<std::string> getCommand() {
 	std::string userInput;
 	std::getline(std::cin, userInput);
@@ -73,20 +68,17 @@ void executeCommand(std::vector<std::string> tokens, std::unique_ptr<std::fstrea
 			std::cerr << "[ERROR]: 'exec' requires a <<file>> argument.\n";
 		}
 	}
-	else if (command == "cls") {
-		clearScreen();
+	else if (command == "cls" || command == "clr") {
+		clr();
 	}
 	else if (command == "help") {
-		std::cout << "Default WORKING_DIR is \".\" \nBe careful while ";
-		std::cout << "List of commands:\n"
-			<< "> ls - list.txt files in WORKING_DIR\n"
-			<< "> cd <<directory>> - change WORKING_DIR \n"
-			<< "> exec <<file_name>> - start work on the file, file must be in the WORKING_DIR\n"
-			<< "> clr - clear terminal screen\n"
-			<< "> exit - close program\n";
+		help();
 	}
 	else if (command == "exit") {
 		exit(0);
+	}
+	else if (command == "pwd") {
+		pwd();
 	}
 	else {
 		std::cerr << "[ERROR]: Uknown command.\n";
@@ -110,17 +102,37 @@ void cd(const std::string& _newDir) {
 	std::cout << "[LOG] Working directory changed to: " << WORKING_DIR << "\n";
 }
 void exec(const std::string& _fileName, std::unique_ptr<std::fstream>& file, std::vector<std::string>& fileContent) {
-	WORKING_FILE = (WORKING_DIR == ".") ? "" : WORKING_DIR + "\\" + _fileName;
-	std::cout << "working on file: " << WORKING_FILE << "\n";
+	WORKING_FILE = (WORKING_DIR == ".") ? _fileName : (WORKING_DIR + "\\" + _fileName);
+	std::cout << "[LOG]: Executed file " << WORKING_FILE << "\n";
 	
 	file = openFile(WORKING_FILE);
 
 	fileContent.clear();
 	if (file) {
 		fileContent = storeFileContent(file);
-		for (const auto& line : fileContent) {
-			std::cout << line << "\n";  // Example output of file content
-		}
+		//for (const auto& line : fileContent) {
+		//	std::cout << line << "\n";  // Example output of file content
+		//}
+		IS_EXECUTED = true;
 	}
 
+}
+void clr() {
+#ifdef _WIN32
+	std::system("cls");
+#else
+	std::sytem("clear");
+#endif
+}
+void help() {
+	std::cout << "Default WORKING_DIR is \".\" \nBe careful while ";
+	std::cout << "List of commands:\n"
+		<< "> ls - list all .txt files in WORKING_DIR\n"
+		<< "> cd <<directory>> - change WORKING_DIR \n"
+		<< "> exec <<file_name>> - start work on the file, file must be in the WORKING_DIR\n"
+		<< "> clr - clear terminal screen\n"
+		<< "> exit - close program\n";
+}
+void pwd() {
+	std::cout << "[WORKING_DIR]: " << WORKING_DIR << "\n";
 }

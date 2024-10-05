@@ -131,11 +131,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FEM_Net_1.cpp" />
     <ClCompile Include="File.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FEM_Net_1.h" />
     <ClInclude Include="File.h" />
+    <ClInclude Include="Includes.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Test1_4_4.txt" />
