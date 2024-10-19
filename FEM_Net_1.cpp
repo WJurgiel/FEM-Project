@@ -1,6 +1,8 @@
 #include "FEM_Net_1.h"
 
-FEM_Net_1::FEM_Net_1(FileContent fileContent) {
+#include <iomanip>
+
+FEM_Net_1::FEM_Net_1(const FileContent& fileContent) {
 	bool isNodeSection = false;
 	bool isElementSection = false;
 	bool isBC = false;
@@ -43,6 +45,15 @@ FEM_Net_1::FEM_Net_1(FileContent fileContent) {
 			elems.erase(elems.begin());
 			elements.push_back(elems);
 		}
+		if (isBC) {
+			std::stringstream ss(line);
+			int bcVal;
+			char comma;
+			while (ss >> bcVal) {
+				bc.push_back(bcVal);
+				ss >> comma;
+			}
+		}
 		if (!isNodeSection && !isElementSection && !isBC) {
 			int value = std::stoi(tokens[1]);
 			configParams[tokens[0]] = value;
@@ -83,18 +94,13 @@ void FEM_Net_1::printData() {
 		id++;
 		std::cout << "|\n";
 		std::cout << "----------------------------------------------------------------------\n";
+
+
+	}
+	std::cout << "BC:\n";
+	for (const auto& i : bc) {
+		std::cout << i << "\t";
 	}
 
-	/*std::cout << "\nID:\t\tElements:\n";
-	std::cout << "-----------------------------------\n";
-	
-	id = 1;
-	for (auto& x : elements) {
-		std::cout << "|[" << std::setw(2) << id++ << " ]| ";
-		for (auto& y : x) {
-			std::cout <<std::setw(4) << y << " ";
-		}
-		std::cout << "|\n";
-		std::cout << "-----------------------------------\n";
-	}*/
+
 }

@@ -11,11 +11,14 @@ class FEM_Net_1
 {
 private:
 	std::unordered_map<std::string, int> configParams;
+	
 	Node nodes;
 	Element elements;
+	BC bc;
+
 	FileContent split(const std::string& str, char delimeter);
 public:
-	FEM_Net_1(FileContent fileContent);
+	FEM_Net_1(const FileContent& fileContent);
 	void printData();
 };
 
