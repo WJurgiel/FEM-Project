@@ -4,7 +4,7 @@
 
 #include "JacobiMethod.h"
 
-//TODO: class containing all the possible 2D integration points
+// to do: class containing all the possible 2D integration points
 
 JacobiMethod::JacobiMethod(Matrix integratonPoints) {
     this->integrationPoints = integratonPoints;
