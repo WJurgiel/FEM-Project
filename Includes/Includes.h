@@ -14,7 +14,8 @@
 #include <vector>
 #include <unordered_map>
 
-using Matrix = std::vector<std::vector<double>>;
+template <typename T>
+    using Matrix = std::vector<std::vector<T>>;
 
 template <typename T>
     using Vector = std::vector<T>;

@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Includes/Element.h"
+#include "Includes/ElemUniv.h"
 #include "Includes/Grid.h"
 #include "Includes/Node.h"
 
@@ -21,14 +22,17 @@ int main()
         Node(-0.57735, -0.57735),   // pc1
         Node(0.57735,-0.57735),   // pc2
         Node(0.57735,0.57735),   // pc3
-        Node(-0.57735, 0.57735)
+        Node(-0.57735, 0.57735) // pc4
     };
     Grid test_grid(test_integrationPoints);
     test_grid.elements.emplace_back(test_element);
     test_grid.nodes = test_nodes;
     test_grid.globalData = test_global_data;
 
-    std::cout << test_grid;
+    ElemUniv elem_univ(test_grid.integrationPoints, test_grid.nip);
+    std::cout << elem_univ;
+
+    // std::cout << test_grid;
     return 0;
 
 }

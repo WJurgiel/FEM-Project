@@ -23,6 +23,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Grid& grid);
 };
+
 inline std::ostream& operator<<(std::ostream& os, const Grid& grid) {
     os << "Nodes:\n";
     for(auto& node: grid.nodes) {
