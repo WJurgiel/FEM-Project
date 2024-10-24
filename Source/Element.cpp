@@ -7,4 +7,10 @@
 Element::Element(int id, Vector<int> nodeIDs) {
     this->id = id;
     this->nodeIDs = nodeIDs;
+
+
 }
+
+// void Element::populateJacobians(int idInteg, Matrix<double> dN_dEta, Matrix<double> dN_dKsi, Vector<Node> elemNodes) {
+//
+// }

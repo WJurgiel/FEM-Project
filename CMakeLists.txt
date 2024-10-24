@@ -14,4 +14,6 @@ add_executable(FEM main.cpp
         Source/Grid.cpp
         Includes/Grid.h
         Source/ElemUniv.cpp
-        Includes/ElemUniv.h)
+        Includes/ElemUniv.h
+        Source/Jacobian.cpp
+        Includes/Jacobian.h)

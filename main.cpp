@@ -32,7 +32,15 @@ int main()
     ElemUniv elem_univ(test_grid.integrationPoints, test_grid.nip);
     std::cout << elem_univ;
 
+    //
+    test_grid.elements[0].jacobianConstantsMatrixes.push_back(Jacobian());
+    test_grid.elements[0].jacobianConstantsMatrixes[0].calculateJacobianMatrix(0, elem_univ.dN_dEta, elem_univ.dn_dKsi, test_grid.nodes);
+    test_grid.elements[0].jacobianConstantsMatrixes[0].calculateDeterminant();
+    test_grid.elements[0].jacobianConstantsMatrixes[0].calculateJacobianInverseMatrix();
+    test_grid.elements[0].jacobianConstantsMatrixes[0].calculateJacobianFinal();
     // std::cout << test_grid;
+
+    std::cout << test_grid.elements[0].jacobianConstantsMatrixes[0];
     return 0;
 
 }
