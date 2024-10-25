@@ -21,11 +21,11 @@ public:
 
     Matrix<double> dN_dx;
     Matrix<double> dN_dy;
-    Matrix<double> H_matrix;
+    Vector<Matrix<double>> H_matrixes; // contains H_matrix for each of integration points
 
-    void populateJacobians(int nip, Matrix<double> dN_dEta, Matrix<double> dN_dKsi,  Vector<Node> elemNodes);
+    void calculateJacobians(int nip, Matrix<double> dN_dEta, Matrix<double> dN_dKsi,  Vector<Node> elemNodes);
     void calculate_dN_dx_dy(int npc, Matrix<double> dN_dEta, Matrix<double> dN_dKsi);
-
+    void calculate_H_matrix(int nip,double conductivity, Vector<double> ipDeterminates);
     void printJacobians(int nip);
     void printMatrix(Matrix<double>);
 

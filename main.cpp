@@ -32,14 +32,26 @@ int main()
     ElemUniv elem_univ(test_grid.integrationPoints, test_grid.nip);
     std::cout << elem_univ;
 
+    //Will be packed up later on...
     //Create Jacobian Matrixes for each of integration points in element[0] and print them
-    test_grid.elements[0].populateJacobians(4, elem_univ.dN_dEta, elem_univ.dn_dKsi, test_grid.nodes);
+    test_grid.elements[0].calculateJacobians(4, elem_univ.dN_dEta, elem_univ.dn_dKsi, test_grid.nodes);
     test_grid.elements[0].printJacobians(4);
     test_grid.elements[0].calculate_dN_dx_dy(4, elem_univ.dN_dEta,elem_univ.dn_dKsi);
     std::cout << "dN/dX\n";
     test_grid.elements[0].printMatrix(test_grid.elements[0].dN_dx);
     std::cout << "dN/dY\n";
     test_grid.elements[0].printMatrix(test_grid.elements[0].dN_dy);
+
+
+    Vector<double> derivatives; // it is required, will probably just make the same vector in Element so it doesn't have to be passed
+    for(int ip = 0; ip < 4; ip++)
+        derivatives.push_back(test_grid.elements[0].jacobianConstantsMatrixes[ip].getDeterminant());
+
+    test_grid.elements[0].calculate_H_matrix(4, test_grid.globalData.getParameter("Conductivity"), derivatives);
+    for(int ip = 0; ip < 4; ip++) {
+        std::cout << "H[" << ip << "]:\n";
+        test_grid.elements[0].printMatrix(test_grid.elements[0].H_matrixes[ip]);
+    }
 
     return 0;
 
