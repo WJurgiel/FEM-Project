@@ -33,15 +33,13 @@ int main()
     std::cout << elem_univ;
 
     //Create Jacobian Matrixes for each of integration points in element[0] and print them
-    for(int ip = 0; ip < test_grid.nip; ip++) {
-        test_grid.elements[0].jacobianConstantsMatrixes.push_back(Jacobian());
-        test_grid.elements[0].jacobianConstantsMatrixes[ip].calculateJacobianMatrix(ip, elem_univ.dN_dEta, elem_univ.dn_dKsi, test_grid.nodes);
-        test_grid.elements[0].jacobianConstantsMatrixes[ip].calculateDeterminant();
-        test_grid.elements[0].jacobianConstantsMatrixes[ip].calculateJacobianInverseMatrix();
-        test_grid.elements[0].jacobianConstantsMatrixes[ip].calculateJacobianFinal();
-        std::cout << "Integ point " << ip << ": " << test_grid.elements[0].jacobianConstantsMatrixes[ip];
-    }
-
+    test_grid.elements[0].populateJacobians(4, elem_univ.dN_dEta, elem_univ.dn_dKsi, test_grid.nodes);
+    test_grid.elements[0].printJacobians(4);
+    test_grid.elements[0].calculate_dN_dx_dy(4, elem_univ.dN_dEta,elem_univ.dn_dKsi);
+    std::cout << "dN/dX\n";
+    test_grid.elements[0].printMatrix(test_grid.elements[0].dN_dx);
+    std::cout << "dN/dY\n";
+    test_grid.elements[0].printMatrix(test_grid.elements[0].dN_dy);
 
     return 0;
 
