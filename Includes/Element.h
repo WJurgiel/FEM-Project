@@ -32,12 +32,18 @@ public:
     void printJacobians(int nip);
     void printMatrix(Matrix<double>);
 
-
+    Vector<int> getNodeIDs();
+    void setNodes(Vector<Node>);
     friend std::ostream& operator<<(std::ostream& os, const Element& e);
+
 };
 inline std::ostream& operator<<(std::ostream& os, const Element& e) {
     os << "Element [" << e.id << "]: ";
     for(auto &n : e.nodeIDs) {
+        os << n << " ";
+    }
+    std::cout << "contains nodes:\n";
+    for(auto &n : e.nodes) {
         os << n << " ";
     }
     os << "\n";

@@ -13,6 +13,8 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <sstream>
+#include <string>
 #include <unordered_map>
 
 template <typename T>
@@ -46,4 +48,15 @@ inline Matrix<double> operator*(const double& n, const Matrix<double>& mat) {
     return result;
 }
 
+
+inline Vector<std::string> split(const std::string& str, char delim) {
+    std::stringstream ss(str);
+    std::string token;
+    Vector<std::string> tokens;
+    while(std::getline(ss,token,delim)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+
+}
 #endif //INCLUDES_H

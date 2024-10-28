@@ -84,5 +84,13 @@ void Element::printMatrix(Matrix<double> matrix) {
     std::cout << "-----------------\n";
 }
 
+Vector<int> Element::getNodeIDs() {
+    return nodeIDs;
+}
+
+void Element::setNodes(Vector<Node> nodes) {
+    this->nodes = nodes;
+}
+
 
 
