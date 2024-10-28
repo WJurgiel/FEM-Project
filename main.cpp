@@ -53,6 +53,10 @@ int main()
         test_grid.elements[0].printMatrix(test_grid.elements[0].H_matrixes[ip]);
     }
 
+    std::cout << "Final H:\n";
+    test_grid.elements[0].calculate_H_final(4, {1,1});
+    test_grid.elements[0].printMatrix(test_grid.elements[0].H_final);
+
     return 0;
 
 }

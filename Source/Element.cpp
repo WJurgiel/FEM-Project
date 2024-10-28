@@ -62,6 +62,11 @@ void Element::calculate_H_matrix(int nip, double conductivity, Vector<double> ip
     }
 }
 
+void Element::calculate_H_final(int nip, Vector<double> wages) {
+    H_final.resize(H_matrixes[0].size(), Vector<double>(H_matrixes[0][0].size()));
+    H_final = wages[0] * wages[0]* H_matrixes[0] + wages[1]*wages[0] * H_matrixes[1] + wages[1]*wages[0]*H_matrixes[2] + wages[1]*wages[1] * H_matrixes[3];
+}
+
 void Element::printJacobians(int nip) {
     for(int ip = 0; ip < nip; ip++) {
         std::cout << "Integ point " << ip << ": " << jacobianConstantsMatrixes[ip];
