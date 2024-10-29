@@ -4,6 +4,22 @@
 
 #include "../Includes/Grid.h"
 
+void Grid::clearFile(std::string out_file_name) {
+    std::ofstream outFile(out_file_name, std::ios::out);
+    try {
+        if(outFile.is_open()) {
+            outFile << "";
+            std::cout << out_file_name << " cleared successfully\n";
+        }
+        else {
+            std::cerr << "Error opening file " << out_file_name << std::endl;
+        }
+    }catch(std::exception& e){
+        std::cout << e.what() << "\n";
+    }
+    outFile.close();
+}
+
 void Grid::assignNodesToElements() {
     for(int elem = 0; elem < elements.size(); ++elem) {
         Vector<Node> newNodes;
@@ -11,6 +27,38 @@ void Grid::assignNodesToElements() {
             newNodes.push_back(nodes[elements[elem].getNodeIDs()[id]]);
         }
         elements[elem].setNodes(newNodes);
+    }
+}
+
+void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi) {
+    std::cout << "Grid::executeCalculations() logs\n";
+
+    Grid::clearFile("../Output/dNdXdY.txt");
+    for(int elem = 0; elem < elements.size(); ++elem) {
+        //calculations
+        elements[elem].calculateJacobians(4, dN_dEta, dN_dKsi, elements[elem].getNodes() );
+        elements[elem].calculate_dN_dx_dy(4, dN_dEta, dN_dKsi);
+        elements[elem].calculate_H_matrix(4, globalData.getParameter("Conductivity"));
+        elements[elem].calculate_H_final(4, {1,1});
+        //output to file
+        std::cout << "[---Element "  << elem << "---]\n";
+        Grid::clearFile("../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
+        elements[elem].printJacobians(4, "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
+        elements[elem].printMatrix(elements[elem].dN_dx, "../Output/dNdXdY.txt", "dN/dx");
+        elements[elem].printMatrix(elements[elem].dN_dy, "../Output/dNdXdY.txt", "dN/dy");
+
+        for(int ip = 0; ip < nip; ip++) {
+            std::string matrixName = "H" + std::to_string(ip);
+            std::string fileName = "../Output/Hpc/Hpc_elem_" + std::to_string(elem) + ".txt";
+            if(ip == 0) Grid::clearFile(fileName);
+            elements[elem].printMatrix(elements[elem].H_matrixes[ip], fileName, matrixName);
+        }
+        Grid::clearFile("../Output/H_final/H_elem_" + std::to_string(elem) + ".txt");
+        elements[elem].printMatrix(elements[elem].H_final, "../Output/H_final/H_elem_" + std::to_string(elem) + ".txt", "H");
+
+
+
+
     }
 }
 

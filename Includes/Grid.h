@@ -11,10 +11,12 @@
 #include "Node.h"
 #include "Element.h"
 #include "GlobalData.h"
-#include <fstream>
+
 
 using File = std::ifstream;
 class Grid {
+private:
+    static void clearFile(std::string);
 public:
     //Contains information about all the nodes
     //Contains information about all the elements - each element has its nodes
@@ -23,7 +25,8 @@ public:
     GlobalData globalData;
 
     void assignNodesToElements();
-
+    //
+    void executeCalculations(Matrix<double>&, Matrix<double>&);
     // Integration points data
     /*normalize = if input file has indexing starting with 1, type 1, if it's normal
         indexing convention (start id=0) type 0

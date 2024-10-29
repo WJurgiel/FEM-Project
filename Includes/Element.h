@@ -26,14 +26,18 @@ public:
 
     void calculateJacobians(int nip, Matrix<double> dN_dEta, Matrix<double> dN_dKsi,  Vector<Node> elemNodes);
     void calculate_dN_dx_dy(int npc, Matrix<double> dN_dEta, Matrix<double> dN_dKsi);
-    void calculate_H_matrix(int nip,double conductivity, Vector<double> ipDeterminates);
+    void calculate_H_matrix(int nip,double conductivity);
     ///Well we don't know how wages are determined yet.
     void calculate_H_final(int nip, Vector<double> wages);
-    void printJacobians(int nip);
+
+    void printJacobians(int nip) const;
+    void printJacobians(int nip, const std::string out_file_name) const;
     void printMatrix(Matrix<double>);
+    void printMatrix(Matrix<double>, std::string, std::string) const;
 
     Vector<int> getNodeIDs();
     void setNodes(Vector<Node>);
+    Vector<Node> getNodes();
     friend std::ostream& operator<<(std::ostream& os, const Element& e);
 
 };

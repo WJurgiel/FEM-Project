@@ -5,6 +5,7 @@
 #include "../Includes/Element.h"
 
 
+
 Element::Element(int id, Vector<int> nodeIDs) {
     this->id = id;
     this->nodeIDs = nodeIDs;
@@ -38,7 +39,7 @@ void Element::calculate_dN_dx_dy(int nip, Matrix<double> dN_dEta, Matrix<double>
     }
 }
 
-void Element::calculate_H_matrix(int nip, double conductivity, Vector<double> ipDeterminates) {
+void Element::calculate_H_matrix(int nip, double conductivity) {
     H_matrixes.resize(nip);
     for(int ip = 0; ip < nip; ip++) {
         H_matrixes[ip].resize(nip, Vector<double>(4));
@@ -55,10 +56,8 @@ void Element::calculate_H_matrix(int nip, double conductivity, Vector<double> ip
             }
         }
         H_matrixes[ip] = conductivity * (L_dN_dx_mat + R_dN_dy_mat);
-        H_matrixes[ip] = ipDeterminates[ip] * H_matrixes[ip];
-        //To do:
-        // multiply the matrixes by wages
-
+        // H_matrixes[ip] = ipDeterminates[ip] * H_matrixes[ip];
+        H_matrixes[ip] = jacobianConstantsMatrixes[ip].getDeterminant() * H_matrixes[ip];
     }
 }
 
@@ -67,13 +66,34 @@ void Element::calculate_H_final(int nip, Vector<double> wages) {
     H_final = wages[0] * wages[0]* H_matrixes[0] + wages[1]*wages[0] * H_matrixes[1] + wages[1]*wages[0]*H_matrixes[2] + wages[1]*wages[1] * H_matrixes[3];
 }
 
-void Element::printJacobians(int nip) {
+void Element::printJacobians(int nip) const {
     for(int ip = 0; ip < nip; ip++) {
-        std::cout << "Integ point " << ip << ": " << jacobianConstantsMatrixes[ip];
+        std::cout << "Integ point " << ip << ":\n" << jacobianConstantsMatrixes[ip] << "\n";
     }
-
 }
+void Element::printJacobians(int nip, const std::string out_file_name) const {
+    std::ofstream outFile(out_file_name, std::ios::app);
+    try {
+        outFile << "\n\t[---Element "  << this->id << "---]\n";
+    }catch(std::exception& e) {
+        std::cout << e.what() << "\n";
+    }
+    for(int ip = 0; ip < nip; ip++) {
+        try {
+            if(outFile.good()) {
+                outFile << "Integration point " << ip << ":\n";
+                outFile << jacobianConstantsMatrixes[ip];
+                std::cout << "Jacobian matrixes saved to " << out_file_name << "\n";
+            }else {
+                std::cout << "Couldn't save Jacobian matrixes\n";
+            }
 
+        }catch(std::exception& e) {
+            std::cout << e.what() << "\n";
+        }
+    }
+    outFile.close();
+}
 void Element::printMatrix(Matrix<double> matrix) {
 
     for(auto x : matrix) {
@@ -83,13 +103,43 @@ void Element::printMatrix(Matrix<double> matrix) {
     }
     std::cout << "-----------------\n";
 }
+void Element::printMatrix(Matrix<double> matrix, std::string out_file_name, std::string matrix_name = "") const{
+    std::ofstream outFile(out_file_name, std::ios::app);
+    try {
+        outFile << "\n\t[---Element "  << this->id << "---]\n";
+    }catch(std::exception& e) {
+        std::cout << e.what() << "\n";
+    }
+    try {
+        if(outFile.good()) {
+            std::cout << "Matrix " << matrix_name << " saved to " << out_file_name << "\n";
+        }else {
+            std::cout << "Couldn't save matrix " <<matrix_name << " to " << out_file_name << "\n";
+        }
+        outFile << matrix_name << "\n";
+        for(auto& x : matrix) {
+            for(auto& y : x)
+                outFile << y << std::setw(10) << " ";
+            outFile << "\n";
+        }
+        outFile << "-----------------\n\n";
+    }
+    catch(std::exception& e) {
+        std::cout << e.what() << "\n";
+    }
+    outFile.close();
 
+}
 Vector<int> Element::getNodeIDs() {
     return nodeIDs;
 }
 
 void Element::setNodes(Vector<Node> nodes) {
     this->nodes = nodes;
+}
+
+Vector<Node> Element::getNodes() {
+    return nodes;
 }
 
 

@@ -11,7 +11,8 @@
 class Jacobian {
 private:
     double determinant;
-    Matrix<double> jacobianMatrix;
+    //These are for each integration point, so MAKE IT VECTOR<MATRIX<DOUBLE>>
+    Matrix<double> jacobianMatrix; // size: Nip x Matrix(2x2)
     Matrix<double> jacobianInverseMatrix;
     Matrix<double> jacobianFinal;
 
@@ -30,15 +31,23 @@ public:
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Jacobian& jacobian) {
-    os << "DET:\n" << jacobian.determinant << "\n";
-    os << "Jacobian final matrix:\n";
+    os << "-------------------------------\n";
+    os << "Jacobian matrix [J]:\n";
+    for(auto& x: jacobian.jacobianMatrix) {
+        for(auto& y: x) {
+            os << y << "\t";
+        }
+        os << "\n";
+    }
+    os << "DET: " << jacobian.determinant << "\n";
+    os << "Jacobian final matrix [J^-1]\n";
     for(auto& x: jacobian.jacobianFinal) {
         for(auto& y: x) {
             os << y << "\t";
         }
         os << "\n";
     }
-    os << "--------------------\n";
+    os << "-------------------------------\n";
     return os;
 }
 

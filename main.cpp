@@ -26,12 +26,9 @@ int main()
     };
     Grid test_grid(test_integrationPoints, "../Input/Test1_4_4.txt");
 
-    std::cout << test_grid << std::endl;
-    // std::cout << test_grid.nodes[0];
-    // std::cout << test_grid.elements[0];
-    // std::cout <<test_grid.elements[1];
-    //
-    // std::cout << test_grid.globalData;
+    // std::cout << test_grid << std::endl;
+    ElemUniv elem_univ(test_grid.integrationPoints, test_grid.nip);
+    test_grid.executeCalculations(elem_univ.dN_dEta, elem_univ.dn_dKsi);
 
     // STRICT TEST
 
@@ -39,7 +36,7 @@ int main()
     // test_grid.nodes = test_nodes;
     // test_grid.globalData = test_global_data;
     //
-    // ElemUniv elem_univ(test_grid.integrationPoints, test_grid.nip);
+
     // std::cout << elem_univ;
     //
     // //Will be packed up later on...
