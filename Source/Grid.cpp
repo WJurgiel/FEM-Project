@@ -31,19 +31,20 @@ void Grid::assignNodesToElements() {
 }
 
 void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi) {
+    std::cout << "nip: " << nip;
     std::cout << "Grid::executeCalculations() logs\n";
 
     Grid::clearFile("../Output/dNdXdY.txt");
     for(int elem = 0; elem < elements.size(); ++elem) {
         //calculations
-        elements[elem].calculateJacobians(4, dN_dEta, dN_dKsi, elements[elem].getNodes() );
-        elements[elem].calculate_dN_dx_dy(4, dN_dEta, dN_dKsi);
-        elements[elem].calculate_H_matrix(4, globalData.getParameter("Conductivity"));
-        elements[elem].calculate_H_final(4, {1,1});
+        elements[elem].calculateJacobians(nip, dN_dEta, dN_dKsi, elements[elem].getNodes() );
+        elements[elem].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
+        elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
+        elements[elem].calculate_H_final(nip, this->wages);
         //output to file
         std::cout << "[---Element "  << elem << "---]\n";
         Grid::clearFile("../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
-        elements[elem].printJacobians(4, "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
+        elements[elem].printJacobians(nip, "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
         elements[elem].printMatrix(elements[elem].dN_dx, "../Output/dNdXdY.txt", "dN/dx");
         elements[elem].printMatrix(elements[elem].dN_dy, "../Output/dNdXdY.txt", "dN/dy");
 
@@ -62,9 +63,34 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
     }
 }
 
-Grid::Grid(Vector<Node> integrationPoints, std::string fileName, int normalize) {
+Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages) {
+    //test constructor
+    nodes.emplace_back(0, 0,0);
+    nodes.emplace_back(1, 0.025,0);
+    nodes.emplace_back(2, 0.025,0.025);
+    nodes.emplace_back(3, 0,0.025);
+    // Dla testu 2
+    // nodes.emplace_back(0, 0.01,-0.01);
+    // nodes.emplace_back(1, 0.025,0);
+    // nodes.emplace_back(2, 0.025,0.025);
+    // nodes.emplace_back(3, 0,0.025);
+
+    elements.push_back(Element(0,{0,1,2,3}));
+
+    this->integrationPoints = integrationPoints;
+
+    globalData.setParameter("Conductivity",30);
+
+    this->wages = wages;
+    nip = static_cast<int>(this->integrationPoints.size());
+
+    assignNodesToElements();
+}
+
+Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string fileName, int normalize) {
     //configure integration points
     this->integrationPoints = integrationPoints;
+    this->wages = wages;
     nip = static_cast<int>(this->integrationPoints.size());
 
     //Read from file

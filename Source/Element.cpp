@@ -42,11 +42,11 @@ void Element::calculate_dN_dx_dy(int nip, Matrix<double> dN_dEta, Matrix<double>
 void Element::calculate_H_matrix(int nip, double conductivity) {
     H_matrixes.resize(nip);
     for(int ip = 0; ip < nip; ip++) {
-        H_matrixes[ip].resize(nip, Vector<double>(4));
+        H_matrixes[ip].resize(4, Vector<double>(4));
         Vector<double> dNi_dx(dN_dx[ip]);
         Vector<double> dNi_dy(dN_dy[ip]);
-        Matrix<double> L_dN_dx_mat(nip, Vector<double>(4)); // {dN/dx}{dN/dx}^T
-        Matrix<double> R_dN_dy_mat(nip, Vector<double>(4)); //{dN/dy}{dN/dy}^T
+        Matrix<double> L_dN_dx_mat(4, Vector<double>(4)); // {dN/dx}{dN/dx}^T
+        Matrix<double> R_dN_dy_mat(4, Vector<double>(4)); //{dN/dy}{dN/dy}^T
         int size = static_cast<int>(dNi_dx.size()); // universal size for dNi_dx and dNi_dNy
         //calculate {dN/dx}{dN/dx}^T and {dN/dy}{dN/dy}^T
         for(int row = 0;  row < size;  row++) {
@@ -56,14 +56,17 @@ void Element::calculate_H_matrix(int nip, double conductivity) {
             }
         }
         H_matrixes[ip] = conductivity * (L_dN_dx_mat + R_dN_dy_mat);
-        // H_matrixes[ip] = ipDeterminates[ip] * H_matrixes[ip];
         H_matrixes[ip] = jacobianConstantsMatrixes[ip].getDeterminant() * H_matrixes[ip];
     }
 }
 
 void Element::calculate_H_final(int nip, Vector<double> wages) {
     H_final.resize(H_matrixes[0].size(), Vector<double>(H_matrixes[0][0].size()));
-    H_final = wages[0] * wages[0]* H_matrixes[0] + wages[1]*wages[0] * H_matrixes[1] + wages[1]*wages[0]*H_matrixes[2] + wages[1]*wages[1] * H_matrixes[3];
+
+    for(int ip = 0; ip < nip; ip++) {
+        H_final = H_final + (wages[ip % wages.size()]* wages[ip / wages.size()] * H_matrixes[ip]);
+    }
+
 }
 
 void Element::printJacobians(int nip) const {

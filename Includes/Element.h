@@ -13,7 +13,7 @@
 class Element {
     int id;
     Vector<int> nodeIDs;
-    Vector<Node> nodes; // I think I haven't implemented it yet
+    Vector<Node> nodes;
 public:
     Element(int id, Vector<int> nodeIDs);
 

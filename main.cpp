@@ -24,45 +24,34 @@ int main()
         Node(0.57735,0.57735),   // pc3
         Node(-0.57735, 0.57735) // pc4
     };
-    Grid test_grid(test_integrationPoints, "../Input/Test1_4_4.txt");
+    const Vector<Node> test_integrationPoints2{
+        Node(-0.7746, -0.7746),
+        Node(0, -0.7746),
+        Node(0.7746, -0.7746),
 
-    // std::cout << test_grid << std::endl;
+        Node(0.7746, 0.0),
+        Node(0.0, 0.0),
+        Node(-0.7746, 0.0),
+
+        Node(-0.7746, 0.7746),
+       Node(0, 0.7746),
+       Node(0.7746, 0.7746)
+    };
+    const Matrix<Vector<double>> wages{
+        {Vector<double>{1,1}},
+        {Vector<double>{5.0/9.0,8.0/9.0, 5.0/9.0}}
+    };
+    // Grid test_grid(test_integrationPoints, wages[0][0], "../Input/Test1_4_4.txt");
+    Grid test_grid(test_integrationPoints2, wages[1][0]);
+    std::cout << test_grid << std::endl;
+
     ElemUniv elem_univ(test_grid.integrationPoints, test_grid.nip);
+
+    std::cout << test_grid;
     test_grid.executeCalculations(elem_univ.dN_dEta, elem_univ.dn_dKsi);
 
-    // STRICT TEST
-
-    // test_grid.elements.emplace_back(test_element);
-    // test_grid.nodes = test_nodes;
-    // test_grid.globalData = test_global_data;
-    //
-
-    // std::cout << elem_univ;
-    //
-    // //Will be packed up later on...
-    // //Create Jacobian Matrixes for each of integration points in element[0] and print them
-    // test_grid.elements[0].calculateJacobians(4, elem_univ.dN_dEta, elem_univ.dn_dKsi, test_grid.nodes);
-    // test_grid.elements[0].printJacobians(4);
-    // test_grid.elements[0].calculate_dN_dx_dy(4, elem_univ.dN_dEta,elem_univ.dn_dKsi);
-    // std::cout << "dN/dX\n";
-    // test_grid.elements[0].printMatrix(test_grid.elements[0].dN_dx);
-    // std::cout << "dN/dY\n";
-    // test_grid.elements[0].printMatrix(test_grid.elements[0].dN_dy);
-    //
-    //
-    // Vector<double> derivatives; // it is required, will probably just make the same vector in Element so it doesn't have to be passed
-    // for(int ip = 0; ip < 4; ip++)
-    //     derivatives.push_back(test_grid.elements[0].jacobianConstantsMatrixes[ip].getDeterminant());
-    //
-    // test_grid.elements[0].calculate_H_matrix(4, test_grid.globalData.getParameter("Conductivity"), derivatives);
-    // for(int ip = 0; ip < 4; ip++) {
-    //     std::cout << "H[" << ip << "]:\n";
-    //     test_grid.elements[0].printMatrix(test_grid.elements[0].H_matrixes[ip]);
-    // }
-    //
-    // std::cout << "Final H:\n";
-    // test_grid.elements[0].calculate_H_final(4, {1,1});
-    // test_grid.elements[0].printMatrix(test_grid.elements[0].H_final);
+    std::cout << elem_univ; // why is this reversed for 3 point integration
+    // somehow it manages to not work XD
 
     return 0;
 
