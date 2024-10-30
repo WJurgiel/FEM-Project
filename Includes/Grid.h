@@ -11,14 +11,30 @@
 #include "Node.h"
 #include "Element.h"
 #include "GlobalData.h"
+
+
+using File = std::ifstream;
 class Grid {
+private:
+    static void clearFile(std::string);
 public:
+    //Contains information about all the nodes
+    //Contains information about all the elements - each element has its nodes
     Vector<Node> nodes;
     Vector<Element> elements;
     GlobalData globalData;
 
-    Grid(Vector<Node> integrationPoints);
+    void assignNodesToElements();
+    //
+    void executeCalculations(Matrix<double>&, Matrix<double>&);
+    // Integration points data
+    /*normalize = if input file has indexing starting with 1, type 1, if it's normal
+        indexing convention (start id=0) type 0
+    */
+    Grid(Vector<Node> integrationPoints, Vector<double> wages);
+    Grid(Vector<Node> integrationPoints,  Vector<double> wages,std::string fileName, int normalize=1);
     Vector<Node> integrationPoints;
+    Vector<double> wages;
     int nip;
 
     friend std::ostream& operator<<(std::ostream& os, const Grid& grid);

@@ -21,11 +21,11 @@ void Jacobian::calculateJacobianMatrix(int idIntegPoint, Matrix<double>& dN_dEta
     *  1    dx/dKsi     dy/dKsi
     *
     */
-    for(int ip = 0; ip < 4; ip++) { //for specific ID integration point, for nip all iterations
-            jacobianMatrix[ETA][X] += dN_dEta[idIntegPoint][ip] * elemNodes[ip].x;
-            jacobianMatrix[ETA][Y] += dN_dEta[idIntegPoint][ip] * elemNodes[ip].y;
-            jacobianMatrix[KSI][X] += dN_dKsi[idIntegPoint][ip] * elemNodes[ip].x;
-            jacobianMatrix[KSI][Y] += dN_dKsi[idIntegPoint][ip] * elemNodes[ip].y;
+    for(int Nid = 0; Nid < 4; Nid++) { //for specific ID integration point, for nip all iterations
+            jacobianMatrix[ETA][X] += dN_dEta[idIntegPoint][Nid] * elemNodes[Nid].x;
+            jacobianMatrix[ETA][Y] += dN_dEta[idIntegPoint][Nid] * elemNodes[Nid].y;
+            jacobianMatrix[KSI][X] += dN_dKsi[idIntegPoint][Nid] * elemNodes[Nid].x;
+            jacobianMatrix[KSI][Y] += dN_dKsi[idIntegPoint][Nid] * elemNodes[Nid].y;
     }
 
 }
