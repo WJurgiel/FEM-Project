@@ -10,6 +10,10 @@
 #define ETA 0
 #define KSI 1
 
+
+// CONFIG
+#define DEBUG 0
+
 #include <iostream>
 #include <vector>
 #include <iomanip>

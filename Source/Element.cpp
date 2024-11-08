@@ -86,9 +86,13 @@ void Element::printJacobians(int nip, const std::string out_file_name) const {
             if(outFile.good()) {
                 outFile << "Integration point " << ip << ":\n";
                 outFile << jacobianConstantsMatrixes[ip];
+#if DEBUG
                 std::cout << "Jacobian matrixes saved to " << out_file_name << "\n";
+
             }else {
+
                 std::cout << "Couldn't save Jacobian matrixes\n";
+#endif
             }
 
         }catch(std::exception& e) {
@@ -114,11 +118,13 @@ void Element::printMatrix(Matrix<double> matrix, std::string out_file_name, std:
         std::cout << e.what() << "\n";
     }
     try {
+#if DEBUG
         if(outFile.good()) {
             std::cout << "Matrix " << matrix_name << " saved to " << out_file_name << "\n";
         }else {
             std::cout << "Couldn't save matrix " <<matrix_name << " to " << out_file_name << "\n";
         }
+#endif
         outFile << matrix_name << "\n";
         for(auto& x : matrix) {
             for(auto& y : x)

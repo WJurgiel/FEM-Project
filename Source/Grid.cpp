@@ -9,11 +9,15 @@ void Grid::clearFile(std::string out_file_name) {
     try {
         if(outFile.is_open()) {
             outFile << "";
+#if DEBUG
             std::cout << out_file_name << " cleared successfully\n";
         }
         else {
             std::cerr << "Error opening file " << out_file_name << std::endl;
+#endif
         }
+
+
     }catch(std::exception& e){
         std::cout << e.what() << "\n";
     }
@@ -31,18 +35,23 @@ void Grid::assignNodesToElements() {
 }
 
 void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi) {
-    std::cout << "nip: " << nip;
-    std::cout << "Grid::executeCalculations() logs\n";
+    std::cout << "nip: " << nip << "\n";
 
+#if DEBUG
+    std::cout << "Grid::executeCalculations() logs\n";
+#endif
     Grid::clearFile("../Output/dNdXdY.txt");
     for(int elem = 0; elem < elements.size(); ++elem) {
         //calculations
+
         elements[elem].calculateJacobians(nip, dN_dEta, dN_dKsi, elements[elem].getNodes() );
         elements[elem].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
         elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
         elements[elem].calculate_H_final(nip, this->wages);
         //output to file
+#if DEBUG
         std::cout << "[---Element "  << elem << "---]\n";
+#endif
         Grid::clearFile("../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
         elements[elem].printJacobians(nip, "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
         elements[elem].printMatrix(elements[elem].dN_dx, "../Output/dNdXdY.txt", "dN/dx");
@@ -171,3 +180,12 @@ Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string file
     }
 
 }
+
+int Grid::getNip() const {
+    return nip;
+}
+
+Vector<Node> Grid::getIntegrationPoints() const {
+    return integrationPoints;
+}
+

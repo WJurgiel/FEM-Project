@@ -16,4 +16,6 @@ add_executable(FEM main.cpp
         Source/ElemUniv.cpp
         Includes/ElemUniv.h
         Source/Jacobian.cpp
-        Includes/Jacobian.h)
+        Includes/Jacobian.h
+        Source/IntegrationPoints.cpp
+        Includes/IntegrationPoints.h)
