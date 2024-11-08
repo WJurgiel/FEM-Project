@@ -16,26 +16,36 @@
 using File = std::ifstream;
 class Grid {
 private:
-    static void clearFile(std::string);
-public:
-    //Contains information about all the nodes
-    //Contains information about all the elements - each element has its nodes
+    // Note: the calculations are made only for quadrangle elements
     Vector<Node> nodes;
     Vector<Element> elements;
     GlobalData globalData;
 
-    void assignNodesToElements();
-    //
-    void executeCalculations(Matrix<double>&, Matrix<double>&);
-    // Integration points data
-    /*normalize = if input file has indexing starting with 1, type 1, if it's normal
-        indexing convention (start id=0) type 0
-    */
-    Grid(Vector<Node> integrationPoints, Vector<double> wages);
-    Grid(Vector<Node> integrationPoints,  Vector<double> wages,std::string fileName, int normalize=1);
     Vector<Node> integrationPoints;
     Vector<double> wages;
+
     int nip;
+
+    static void clearFile(std::string);
+public:
+    // Always call this function in the constructor -> without it elements won't know their nodes
+    void assignNodesToElements();
+
+    void executeCalculations(Matrix<double>&, Matrix<double>&);
+
+    //Constructors:
+    //Please use this constructor when you are testing the program on custom values
+    Grid(Vector<Node> integrationPoints, Vector<double> wages);
+
+    // Please use this constructor when you want to make calculations with data from file
+    /*normalize parameter = if input file has indexing starting with 1, type 1, if it's normal
+            indexing convention (start id=0) type 0
+    */
+    Grid(Vector<Node> integrationPoints,  Vector<double> wages,std::string fileName, int normalize=1);
+
+    // Getters:
+    int getNip() const;
+    Vector<Node> getIntegrationPoints() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Grid& grid);
 };
