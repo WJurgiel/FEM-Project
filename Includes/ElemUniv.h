@@ -10,14 +10,18 @@
 #include "Includes.h"
 #include "Node.h"
 class ElemUniv {
-public:
+private:
     Matrix<double> dN_dEta;
     Matrix<double> dn_dKsi;
+public:
+
 
     ElemUniv(Vector<Node> integPoints, int npc);
 
-    // need test integration points
-    //need nip;
+    //Getters
+    Matrix<double> & getdN_dEta();
+    Matrix<double> & getdN_dKsi();
+
     friend std::ostream& operator<<(std::ostream& os, const ElemUniv& elemUniv);
 };
 inline std::ostream& operator<<(std::ostream& os, const ElemUniv& elemUniv) {

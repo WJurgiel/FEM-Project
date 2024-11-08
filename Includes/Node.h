@@ -8,18 +8,23 @@
 #include "Includes.h"
 
 class Node {
-public:
+private:
     int id;
     double x,y;
+public:
 
     Node(double x, double y);
     Node(int id, double x, double y);
 
+    //Getters
+    int getID() const;
+    double getX() const;
+    double getY() const;
     friend std::ostream& operator<<(std::ostream& os, const Node& n);
 };
 inline std::ostream& operator<<(std::ostream& os, const Node& n) {
     os << "[" << n.id << "]: (" << n.x << ", " << n.y << ")\n";
     return os;
 }
-// After assuring that the calculations work fine, add methods to read from file
+
 #endif //NODE_H

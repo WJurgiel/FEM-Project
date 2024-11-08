@@ -24,9 +24,10 @@ public:
     void calculateDeterminant();
     void calculateJacobianFinal();
 
-    // void executeJacobianMatrix();
+    //Getters
     double getDeterminant() const;
     Matrix<double> getJacobianFinal() const;
+
     friend std::ostream& operator<<(std::ostream& os, const Jacobian& jacobian);
 };
 

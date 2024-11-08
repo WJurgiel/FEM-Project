@@ -14,20 +14,17 @@ class Element {
     int id;
     Vector<int> nodeIDs;
     Vector<Node> nodes;
-public:
-    Element(int id, Vector<int> nodeIDs);
-
     Vector<Jacobian> jacobianConstantsMatrixes; // each jacobian matrix for each of the integration points
-
     Matrix<double> dN_dx;
     Matrix<double> dN_dy;
     Vector<Matrix<double>> H_matrixes; // contains H_matrix for each of integration points
     Matrix<double> H_final;
+public:
+    Element(int id, Vector<int> nodeIDs);
 
     void calculateJacobians(int nip, Matrix<double> dN_dEta, Matrix<double> dN_dKsi,  Vector<Node> elemNodes);
     void calculate_dN_dx_dy(int npc, Matrix<double> dN_dEta, Matrix<double> dN_dKsi);
     void calculate_H_matrix(int nip,double conductivity);
-    ///Well we don't know how wages are determined yet.
     void calculate_H_final(int nip, Vector<double> wages);
 
     void printJacobians(int nip) const;
@@ -35,9 +32,17 @@ public:
     void printMatrix(Matrix<double>);
     void printMatrix(Matrix<double>, std::string, std::string) const;
 
-    Vector<int> getNodeIDs();
+    //Getters
+    Vector<int> getNodeIDs()const ;
+    Vector<Node> getNodes() const;
+    Matrix<double> getdN_dx() const;
+    Matrix<double> getdN_dy() const;
+    Matrix<double> getH_matrixes(int ip) const;
+    Vector<Matrix<double>> getH_matrixes() const;
+    Matrix<double> getH_final() const;
+
+    //Setters
     void setNodes(Vector<Node>);
-    Vector<Node> getNodes();
     friend std::ostream& operator<<(std::ostream& os, const Element& e);
 
 };

@@ -139,17 +139,38 @@ void Element::printMatrix(Matrix<double> matrix, std::string out_file_name, std:
     outFile.close();
 
 }
-Vector<int> Element::getNodeIDs() {
+
+Vector<int> Element::getNodeIDs() const {
     return nodeIDs;
 }
+
+
+Vector<Node> Element::getNodes() const {
+    return nodes;
+}
+
+Matrix<double> Element::getdN_dx() const {
+    return dN_dx;
+}
+
+Matrix<double> Element::getdN_dy() const {
+    return dN_dy;
+}
+
+Matrix<double> Element::getH_matrixes(int ip) const {
+    return H_matrixes[ip];
+}
+
+Vector<Matrix<double>> Element::getH_matrixes() const {
+    return H_matrixes;
+}
+
+Matrix<double> Element::getH_final() const {
+    return H_final;
+}
+
 
 void Element::setNodes(Vector<Node> nodes) {
     this->nodes = nodes;
 }
-
-Vector<Node> Element::getNodes() {
-    return nodes;
-}
-
-
 

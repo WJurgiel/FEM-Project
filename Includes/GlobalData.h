@@ -14,12 +14,16 @@ private:
 
 public:
     GlobalData();
-    void setParameter(std::string key, int value);
+
+    //Getters
     int getParameter(std::string key);
+
+    //Setters
+    void setParameter(std::string key, int value);
+
 
     friend std::ostream& operator<<(std::ostream& os, const GlobalData& obj);
 };
-// After assuring that the calculations work fine, add methods to read from file
 
 inline std::ostream& operator<<(std::ostream& os, const GlobalData& obj) {
     for(auto& param : obj.parameters) {
