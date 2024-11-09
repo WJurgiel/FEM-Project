@@ -19,3 +19,5 @@ add_executable(FEM main.cpp
         Includes/Jacobian.h
         Source/IntegrationPoints.cpp
         Includes/IntegrationPoints.h)
+
+add_subdirectory(Google_Tests)

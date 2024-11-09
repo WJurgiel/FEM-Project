@@ -16,3 +16,15 @@ Node::Node(int id, double x, double y) {
     this->x = x;
     this->y = y;
 }
+
+int Node::getID() const {
+    return id;
+}
+
+double Node::getX() const {
+    return x;
+}
+
+double Node::getY() const {
+    return y;
+}

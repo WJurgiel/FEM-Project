@@ -4,6 +4,8 @@
 
 #include "../Includes/Grid.h"
 
+#include <filesystem>
+
 void Grid::clearFile(std::string out_file_name) {
     std::ofstream outFile(out_file_name, std::ios::out);
     try {
@@ -36,7 +38,12 @@ void Grid::assignNodesToElements() {
 
 void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi) {
     std::cout << "nip: " << nip << "\n";
-
+    for(const auto& entry: std::filesystem::directory_iterator("../Output/")) {
+        std::filesystem::remove_all(entry.path());
+    }
+    std::filesystem::create_directory("../Output/Jacobian_Matrices");
+    std::filesystem::create_directory("../Output/Hpc");
+    std::filesystem::create_directory("../Output/H_final");
 #if DEBUG
     std::cout << "Grid::executeCalculations() logs\n";
 #endif
@@ -54,21 +61,17 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
 #endif
         Grid::clearFile("../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
         elements[elem].printJacobians(nip, "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
-        elements[elem].printMatrix(elements[elem].dN_dx, "../Output/dNdXdY.txt", "dN/dx");
-        elements[elem].printMatrix(elements[elem].dN_dy, "../Output/dNdXdY.txt", "dN/dy");
+        elements[elem].printMatrix(elements[elem].getdN_dx(), "../Output/dNdXdY.txt", "dN/dx");
+        elements[elem].printMatrix(elements[elem].getdN_dy(), "../Output/dNdXdY.txt", "dN/dy");
 
         for(int ip = 0; ip < nip; ip++) {
             std::string matrixName = "H" + std::to_string(ip);
             std::string fileName = "../Output/Hpc/Hpc_elem_" + std::to_string(elem) + ".txt";
             if(ip == 0) Grid::clearFile(fileName);
-            elements[elem].printMatrix(elements[elem].H_matrixes[ip], fileName, matrixName);
+            elements[elem].printMatrix(elements[elem].getH_matrixes(ip), fileName, matrixName);
         }
         Grid::clearFile("../Output/H_final/H_elem_" + std::to_string(elem) + ".txt");
-        elements[elem].printMatrix(elements[elem].H_final, "../Output/H_final/H_elem_" + std::to_string(elem) + ".txt", "H");
-
-
-
-
+        elements[elem].printMatrix(elements[elem].getH_final(), "../Output/H_final/H_elem_" + std::to_string(elem) + ".txt", "H");
     }
 }
 
