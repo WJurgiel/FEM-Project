@@ -1,10 +1,8 @@
 #include <iostream>
 
-#include "Includes/Element.h"
 #include "Includes/ElemUniv.h"
 #include "Includes/Grid.h"
 #include "Includes/IntegrationPoints.h"
-#include "Includes/Node.h"
 int main()
 {
     std::string file1 = "../Input/Test1_4_4.txt";
@@ -12,7 +10,7 @@ int main()
     std::string file3 = "../Input/Test3_31_31_kwadrat.txt";
     IntegrationPoints ip(4);
 
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file2);
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file1);
     
     ElemUniv elem_univ(FEM_grid.getIntegrationPoints(), FEM_grid.getNip());
 
