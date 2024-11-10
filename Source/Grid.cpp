@@ -5,27 +5,7 @@
 #include "Grid.h"
 
 #include <filesystem>
-
-void Grid::clearFile(std::string out_file_name) {
-    std::ofstream outFile(out_file_name, std::ios::out);
-    try {
-        if(outFile.is_open()) {
-            outFile << "";
-#if DEBUG
-            std::cout << out_file_name << " cleared successfully\n";
-        }
-        else {
-            std::cerr << "Error opening file " << out_file_name << std::endl;
-#endif
-        }
-
-
-    }catch(std::exception& e){
-        std::cout << e.what() << "\n";
-    }
-    outFile.close();
-}
-
+#include "FileHandler.h"
 void Grid::assignNodesToElements() {
     for(int elem = 0; elem < elements.size(); ++elem) {
         Vector<Node> newNodes;
@@ -37,41 +17,45 @@ void Grid::assignNodesToElements() {
 }
 
 void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi) {
+
+
     std::cout << "nip: " << nip << "\n";
-    for(const auto& entry: std::filesystem::directory_iterator("../Output/")) {
-        std::filesystem::remove_all(entry.path());
-    }
-    std::filesystem::create_directory("../Output/Jacobian_Matrices");
-    std::filesystem::create_directory("../Output/Hpc");
-    std::filesystem::create_directory("../Output/H_final");
+    FileHandler::clearOutputDirectory();
+    FileHandler::initDirectories();
 #if DEBUG
     std::cout << "Grid::executeCalculations() logs\n";
 #endif
-    Grid::clearFile("../Output/dNdXdY.txt");
+    FileHandler::clearFile("../Output/dNdXdY.txt"); // think about where to store paths
+    //calculations and saving
     for(int elem = 0; elem < elements.size(); ++elem) {
-        //calculations
-
-        elements[elem].calculateJacobians(nip, dN_dEta, dN_dKsi, elements[elem].getNodes() );
+        elements[elem].calculateJacobians(nip, dN_dEta, dN_dKsi, elements[elem].getNodes());
         elements[elem].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
         elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
         elements[elem].calculate_H_final(nip, this->wages);
-        //output to file
 #if DEBUG
         std::cout << "[---Element "  << elem << "---]\n";
 #endif
-        Grid::clearFile("../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
-        elements[elem].printJacobians(nip, "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem)+".txt");
-        elements[elem].printMatrix(elements[elem].getdN_dx(), "../Output/dNdXdY.txt", "dN/dx");
-        elements[elem].printMatrix(elements[elem].getdN_dy(), "../Output/dNdXdY.txt", "dN/dy");
+        std::string jac_path = "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem) + ".txt";
+        std::string dNdXdY_path = "../Output/dNdXdY.txt";
+        std::string H_final_path = "../Output/H_final/H_elem_" + std::to_string(elem) + ".txt";
+        std::string Hpc_path = "../Output/Hpc/Hpc_elem_" + std::to_string(elem) + ".txt";
 
-        for(int ip = 0; ip < nip; ip++) {
+        // Jacobian matrices output
+        FileHandler::saveToFile(jac_path, elements[elem], elements[elem].getJacobianConstantsMatrixes(), nip);
+
+        // dNdXdY output
+        FileHandler::saveToFile(dNdXdY_path, elements[elem], elements[elem].getdN_dx(), "dN/dx", nip, false);
+        FileHandler::saveToFile(dNdXdY_path, elements[elem], elements[elem].getdN_dy(), "dN/dx", nip, false);
+
+        // Hpc matrices output
+        for (int ip = 0; ip < nip; ip++) {
             std::string matrixName = "H" + std::to_string(ip);
-            std::string fileName = "../Output/Hpc/Hpc_elem_" + std::to_string(elem) + ".txt";
-            if(ip == 0) Grid::clearFile(fileName);
-            elements[elem].printMatrix(elements[elem].getH_matrixes(ip), fileName, matrixName);
+            if (ip == 0) FileHandler::clearFile(Hpc_path); // delete only on start for this element
+            FileHandler::saveToFile(Hpc_path, elements[elem], elements[elem].getH_matrixes(ip), matrixName, nip, false);
         }
-        Grid::clearFile("../Output/H_final/H_elem_" + std::to_string(elem) + ".txt");
-        elements[elem].printMatrix(elements[elem].getH_final(), "../Output/H_final/H_elem_" + std::to_string(elem) + ".txt", "H");
+
+        // H final output
+        FileHandler::saveToFile(H_final_path, elements[elem], elements[elem].getH_final(), "H", nip);
     }
 }
 

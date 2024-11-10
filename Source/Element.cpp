@@ -74,33 +74,6 @@ void Element::printJacobians(int nip) const {
         std::cout << "Integ point " << ip << ":\n" << jacobianConstantsMatrixes[ip] << "\n";
     }
 }
-void Element::printJacobians(int nip, const std::string out_file_name) const {
-    std::ofstream outFile(out_file_name, std::ios::app);
-    try {
-        outFile << "\n\t[---Element "  << this->id << "---]\n";
-    }catch(std::exception& e) {
-        std::cout << e.what() << "\n";
-    }
-    for(int ip = 0; ip < nip; ip++) {
-        try {
-            if(outFile.good()) {
-                outFile << "Integration point " << ip << ":\n";
-                outFile << jacobianConstantsMatrixes[ip];
-#if DEBUG
-                std::cout << "Jacobian matrixes saved to " << out_file_name << "\n";
-
-            }else {
-
-                std::cout << "Couldn't save Jacobian matrixes\n";
-#endif
-            }
-
-        }catch(std::exception& e) {
-            std::cout << e.what() << "\n";
-        }
-    }
-    outFile.close();
-}
 void Element::printMatrix(Matrix<double> matrix) {
 
     for(auto x : matrix) {
@@ -109,35 +82,6 @@ void Element::printMatrix(Matrix<double> matrix) {
         std::cout << "\n";
     }
     std::cout << "-----------------\n";
-}
-void Element::printMatrix(Matrix<double> matrix, std::string out_file_name, std::string matrix_name = "") const{
-    std::ofstream outFile(out_file_name, std::ios::app);
-    try {
-        outFile << "\n\t[---Element "  << this->id << "---]\n";
-    }catch(std::exception& e) {
-        std::cout << e.what() << "\n";
-    }
-    try {
-#if DEBUG
-        if(outFile.good()) {
-            std::cout << "Matrix " << matrix_name << " saved to " << out_file_name << "\n";
-        }else {
-            std::cout << "Couldn't save matrix " <<matrix_name << " to " << out_file_name << "\n";
-        }
-#endif
-        outFile << matrix_name << "\n";
-        for(auto& x : matrix) {
-            for(auto& y : x)
-                outFile << y << std::setw(10) << " ";
-            outFile << "\n";
-        }
-        outFile << "-----------------\n\n";
-    }
-    catch(std::exception& e) {
-        std::cout << e.what() << "\n";
-    }
-    outFile.close();
-
 }
 
 Vector<int> Element::getNodeIDs() const {
@@ -161,12 +105,20 @@ Matrix<double> Element::getH_matrixes(int ip) const {
     return H_matrixes[ip];
 }
 
+Vector<Jacobian> Element::getJacobianConstantsMatrixes() const {
+    return jacobianConstantsMatrixes;
+}
+
 Vector<Matrix<double>> Element::getH_matrixes() const {
     return H_matrixes;
 }
 
 Matrix<double> Element::getH_final() const {
     return H_final;
+}
+
+int Element::getID() const {
+    return id;
 }
 
 
