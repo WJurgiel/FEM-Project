@@ -3,21 +3,21 @@ project(FEM)
 
 set(CMAKE_CXX_STANDARD 20)
 
+include_directories(Includes)
+add_subdirectory(Source)
+
 add_executable(FEM main.cpp
         Source/Node.cpp
-        Includes/Node.h
-        Includes/Includes.h
         Source/GlobalData.cpp
-        Includes/GlobalData.h
         Source/Element.cpp
-        Includes/Element.h
         Source/Grid.cpp
-        Includes/Grid.h
         Source/ElemUniv.cpp
-        Includes/ElemUniv.h
         Source/Jacobian.cpp
-        Includes/Jacobian.h
         Source/IntegrationPoints.cpp
-        Includes/IntegrationPoints.h)
+)
 
 add_subdirectory(Google_Tests)
+
+include_directories(lib/time-measurement)
+add_subdirectory(lib/time-measurement)
+target_link_libraries(FEM timer_lib)

@@ -2,7 +2,7 @@
 // Created by Wojtek on 08.11.2024.
 //
 
-#include "../Includes/IntegrationPoints.h"
+#include "IntegrationPoints.h"
 
 IntegrationPoints::IntegrationPoints(int IPpoints) {
     setIntegrationPoints(IPpoints);

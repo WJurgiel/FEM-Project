@@ -2,7 +2,7 @@
 // Created by Wojtek on 24.10.2024.
 //
 
-#include "../Includes/Node.h"
+#include "Node.h"
 
 
 Node::Node(double x, double y) {

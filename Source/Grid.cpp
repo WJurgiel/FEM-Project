@@ -2,7 +2,7 @@
 // Created by Wojtek on 24.10.2024.
 //
 
-#include "../Includes/Grid.h"
+#include "Grid.h"
 
 #include <filesystem>
 

@@ -2,7 +2,7 @@
 // Created by Wojtek on 24.10.2024.
 //
 
-#include "../Includes/ElemUniv.h"
+#include "ElemUniv.h"
 
 ElemUniv::ElemUniv(Vector<Node> integPoints, int nip) {
     dN_dEta.resize(nip, std::vector<double>(4)); // 4 columns because you're accessing dN_dEta[ip][0] to dN_dEta[ip][3]
