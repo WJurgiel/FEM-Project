@@ -30,6 +30,8 @@ public:
     void assignNodesToElements();
 
     void executeCalculations(Matrix<double>&, Matrix<double>&);
+    // Use when you want to execute calculations for specific element (possibly for multithreading)
+    void executeCalculations(Matrix<double>&, Matrix<double>&, int elementID);
 
     //Constructors:
     //Please use this constructor when you are testing the program on custom values
@@ -44,6 +46,7 @@ public:
     // Getters:
     int getNip() const;
     Vector<Node> getIntegrationPoints() const;
+    std::size_t getElementCount() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Grid& grid);
 };

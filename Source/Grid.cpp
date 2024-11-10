@@ -58,6 +58,50 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
         FileHandler::saveToFile(H_final_path, elements[elem], elements[elem].getH_final(), "H", nip);
     }
 }
+/* To make it work as it should, call
+ * FileHandler::clearOutputDirectory()
+ * FileHandler::initDirectories()
+ right before calling, otherwise you will receive just one file
+ */
+void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi, int elementID) {
+    // FileHandler::clearOutputDirectory();
+    // FileHandler::initDirectories();
+#if DEBUG
+    std::cout << "Grid::executeCalculations() logs\n";
+#endif
+    FileHandler::clearFile("../Output/dNdXdY.txt"); // think about where to store paths
+    //calculations and saving
+    elements[elementID].calculateJacobians(nip, dN_dEta, dN_dKsi, elements[elementID].getNodes());
+    elements[elementID].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
+    elements[elementID].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
+    elements[elementID].calculate_H_final(nip, this->wages);
+
+#if DEBUG
+        std::cout << "[---Element "  << elem << "---]\n";
+#endif
+        std::string jac_path = "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elementID) + ".txt";
+        std::string dNdXdY_path = "../Output/dNdXdY.txt";
+        std::string H_final_path = "../Output/H_final/H_elem_" + std::to_string(elementID) + ".txt";
+        std::string Hpc_path = "../Output/Hpc/Hpc_elem_" + std::to_string(elementID) + ".txt";
+
+        // Jacobian matrices output
+        FileHandler::saveToFile(jac_path, elements[elementID], elements[elementID].getJacobianConstantsMatrixes(), nip);
+
+        // dNdXdY output
+        FileHandler::saveToFile(dNdXdY_path, elements[elementID], elements[elementID].getdN_dx(), "dN/dx", nip, false);
+        FileHandler::saveToFile(dNdXdY_path, elements[elementID], elements[elementID].getdN_dy(), "dN/dx", nip, false);
+
+        // Hpc matrices output
+        for (int ip = 0; ip < nip; ip++) {
+            std::string matrixName = "H" + std::to_string(ip);
+            if (ip == 0) FileHandler::clearFile(Hpc_path); // delete only on start for this element
+            FileHandler::saveToFile(Hpc_path, elements[elementID], elements[elementID].getH_matrixes(ip), matrixName, nip, false);
+        }
+
+        // H final output
+        FileHandler::saveToFile(H_final_path, elements[elementID], elements[elementID].getH_final(), "H", nip);
+
+}
 
 Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages) {
     //test constructor
@@ -174,5 +218,9 @@ int Grid::getNip() const {
 
 Vector<Node> Grid::getIntegrationPoints() const {
     return integrationPoints;
+}
+
+std::size_t Grid::getElementCount() const {
+    return elements.size();
 }
 
