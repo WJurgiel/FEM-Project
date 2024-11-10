@@ -1,8 +1,9 @@
 #include <iostream>
 
-#include "Includes/ElemUniv.h"
-#include "Includes/Grid.h"
-#include "Includes/IntegrationPoints.h"
+#include "ElemUniv.h"
+#include "Grid.h"
+#include "IntegrationPoints.h"
+#include "timer.h"
 int main()
 {
     std::string file1 = "../Input/Test1_4_4.txt";
@@ -10,7 +11,7 @@ int main()
     std::string file3 = "../Input/Test3_31_31_kwadrat.txt";
     IntegrationPoints ip(4);
 
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file1);
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file2);
     
     ElemUniv elem_univ(FEM_grid.getIntegrationPoints(), FEM_grid.getNip());
 
