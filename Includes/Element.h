@@ -28,18 +28,17 @@ public:
     void calculate_H_final(int nip, Vector<double> wages);
 
     void printJacobians(int nip) const;
-    void printJacobians(int nip, const std::string out_file_name) const;
     void printMatrix(Matrix<double>);
-    void printMatrix(Matrix<double>, std::string, std::string) const;
-
     //Getters
     Vector<int> getNodeIDs()const ;
     Vector<Node> getNodes() const;
     Matrix<double> getdN_dx() const;
     Matrix<double> getdN_dy() const;
     Matrix<double> getH_matrixes(int ip) const;
+    Vector<Jacobian> getJacobianConstantsMatrixes() const;
     Vector<Matrix<double>> getH_matrixes() const;
     Matrix<double> getH_final() const;
+    int getID() const;
 
     //Setters
     void setNodes(Vector<Node>);

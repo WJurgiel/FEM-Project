@@ -18,6 +18,8 @@ add_executable(FEM main.cpp
 
 add_subdirectory(Google_Tests)
 
-include_directories(lib/time-measurement)
+include_directories(lib/time-measurement lib/file-handler)
 add_subdirectory(lib/time-measurement)
-target_link_libraries(FEM timer_lib)
+add_subdirectory(lib/file-handler)
+
+target_link_libraries(FEM timer_lib file_handler)

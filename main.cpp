@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "ElemUniv.h"
+#include "FileHandler.h"
 #include "Grid.h"
 #include "IntegrationPoints.h"
 #include "Timer.h"
@@ -11,8 +12,8 @@ int main()
     std::string file3 = "../Input/Test3_31_31_kwadrat.txt";
     IntegrationPoints ip(4);
     Timer timer;
-
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file3);
+    FileHandler::initDirectories();
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file1);
     
     ElemUniv elem_univ(FEM_grid.getIntegrationPoints(), FEM_grid.getNip());
 

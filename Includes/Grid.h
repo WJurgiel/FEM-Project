@@ -25,9 +25,6 @@ private:
     Vector<double> wages;
 
     int nip;
-
-
-    static void clearFile(std::string);
 public:
     // Always call this function in the constructor -> without it elements won't know their nodes
     void assignNodesToElements();
