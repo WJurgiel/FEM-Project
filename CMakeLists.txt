@@ -14,6 +14,7 @@ add_executable(FEM main.cpp
         Source/ElemUniv.cpp
         Source/Jacobian.cpp
         Source/IntegrationPoints.cpp
+        Source/GlobalSystemEquation.cpp
 )
 
 add_subdirectory(Google_Tests)
