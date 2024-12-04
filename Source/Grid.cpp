@@ -224,3 +224,11 @@ std::size_t Grid::getElementCount() const {
     return elements.size();
 }
 
+Element Grid::getElement(int id) const {
+    return elements[id];
+}
+
+Vector<Node> Grid::getNodes() const {
+    return nodes;
+}
+

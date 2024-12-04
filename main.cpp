@@ -1,3 +1,4 @@
+#include <GlobalSystemEquation.h>
 #include <iostream>
 
 #include "ElemUniv.h"
@@ -14,10 +15,10 @@ int main()
     std::string file1 = "../Input/Test1_4_4.txt";
     std::string file2 = "../Input/Test2_4_4_MixGrid.txt";
     std::string file3 = "../Input/Test3_31_31_kwadrat.txt";
-    IntegrationPoints ip(25);
+    IntegrationPoints ip(4);
     Timer timer;
     FileHandler::initDirectories();
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file3);
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file1);
     
     ElemUniv elem_univ(FEM_grid.getIntegrationPoints(), FEM_grid.getNip());
 
@@ -29,10 +30,10 @@ int main()
     {
         for(int pid = 0; pid < elCount; pid++) {
             threads.emplace_back([&FEM_grid, &elem_univ, pid]() {
-                {
-                    std::lock_guard<std::mutex> guard(cout_mutex);
-                    std::cout << "[THREAD " <<pid << " ]" << "performing task for element: " << pid << "\n";
-                }
+                // {
+                //     std::lock_guard<std::mutex> guard(cout_mutex);
+                //     std::cout << "[THREAD " <<pid << " ]" << "performing task for element: " << pid << "\n";
+                // }
 
                 FEM_grid.executeCalculations(
                     elem_univ.getdN_dEta(),
@@ -48,11 +49,10 @@ int main()
     // FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
     timer.stop();
 
-    // Uncomment just the line below and comment all thread related things to make it work without threading
-
-
-
-
+    GlobalSystemEquation globalSystemEquation;
+    std::cout << FEM_grid;
+    aggregation(FEM_grid, globalSystemEquation);
+    std::cout << globalSystemEquation;
 
     std::cout << elem_univ;
     std::cout << timer;

@@ -47,6 +47,8 @@ public:
     int getNip() const;
     Vector<Node> getIntegrationPoints() const;
     std::size_t getElementCount() const;
+    Element getElement(int id) const;
+    Vector<Node> getNodes() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Grid& grid);
 };

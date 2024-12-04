@@ -30,7 +30,7 @@ public:
     void printJacobians(int nip) const;
     void printMatrix(Matrix<double>);
     //Getters
-    Vector<int> getNodeIDs()const ;
+    Vector<int> getNodeIDs()const;
     Vector<Node> getNodes() const;
     Matrix<double> getdN_dx() const;
     Matrix<double> getdN_dy() const;
