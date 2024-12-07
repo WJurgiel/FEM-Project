@@ -22,7 +22,7 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
     std::cout << "nip: " << nip << "\n";
     FileHandler::clearOutputDirectory();
     FileHandler::initDirectories();
-#if DEBUG
+#if DEBUGINFO
     std::cout << "Grid::executeCalculations() logs\n";
 #endif
     FileHandler::clearFile("../Output/dNdXdY.txt"); // think about where to store paths
@@ -32,7 +32,7 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
         elements[elem].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
         elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
         elements[elem].calculate_H_final(nip, this->wages);
-#if DEBUG
+#if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
 #endif
         std::string jac_path = "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem) + ".txt";
@@ -66,7 +66,7 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
 void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi, int elementID) {
     // FileHandler::clearOutputDirectory();
     // FileHandler::initDirectories();
-#if DEBUG
+#if DEBUGINFO
     std::cout << "Grid::executeCalculations() logs\n";
 #endif
     FileHandler::clearFile("../Output/dNdXdY.txt"); // think about where to store paths
@@ -76,7 +76,7 @@ void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi
     elements[elementID].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
     elements[elementID].calculate_H_final(nip, this->wages);
 
-#if DEBUG
+#if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
 #endif
         std::string jac_path = "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elementID) + ".txt";
@@ -183,15 +183,17 @@ Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string file
 
                 elements.push_back(Element{elems[0]-normalize, Vector<int>{elems[1]-normalize,elems[2]-normalize,elems[3]-normalize,elems[4]-normalize}});
             }
-            // if (isBC) {
-            //     std::stringstream ss(line);
-            //     int bcVal;
-            //     char comma;
-            //     while (ss >> bcVal) {
-            //         bc.push_back(bcVal);
-            //         ss >> comma;
-            //     }
-            // }
+            if (isBC) {
+                std::stringstream ss(line);
+                int bcVal;
+                char comma;
+                while (ss >> bcVal) {
+                    nodes[bcVal - normalize].setBC(true);
+                    ss >> comma;
+                }
+
+
+            }
             if (!isNodeSection && !isElementSection && !isBC) {
                 int value = std::stoi(tokens[1]);
                 globalData.setParameter(tokens[0], value);

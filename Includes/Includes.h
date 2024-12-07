@@ -12,7 +12,9 @@
 
 
 // CONFIG
-#define DEBUG 0
+#define DEBUGINFO 0
+#define CALCULATIONS 0
+#define MULTITHREADING 0
 
 #include <iostream>
 #include <vector>

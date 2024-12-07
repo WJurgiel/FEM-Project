@@ -11,19 +11,24 @@ class Node {
 private:
     int id;
     double x,y;
+    bool isBC;
 public:
 
-    Node(double x, double y);
-    Node(int id, double x, double y);
+    Node(double x, double y, bool isBC = false);
+    //every node is created
+    Node(int id, double x, double y, bool isBC = false);
 
     //Getters
     int getID() const;
     double getX() const;
     double getY() const;
+    //This setter should be always called in constructor when reading BC
+    void setBC(bool val);
     friend std::ostream& operator<<(std::ostream& os, const Node& n);
 };
 inline std::ostream& operator<<(std::ostream& os, const Node& n) {
-    os << "[" << n.id << "]: (" << n.x << ", " << n.y << ")\n";
+    os << "[" << n.id << "]: (" << n.x << ", " << n.y << ")" <<
+        " isBC = " <<  n.isBC << "\n";
     return os;
 }
 

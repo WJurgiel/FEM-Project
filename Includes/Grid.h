@@ -55,16 +55,16 @@ public:
 
 inline std::ostream& operator<<(std::ostream& os, const Grid& grid) {
     os << "Nodes:\n";
-    for(auto& node: grid.nodes) {
+    for(const auto& node: grid.nodes) {
         os << node;
     }
-    for(auto& elem : grid.elements) {
+    for(const auto& elem : grid.elements) {
          os << elem << "\n";
     }
     os << grid.globalData << "\n";
 
     os<< "Integration points:\n";
-    for(auto& point: grid.integrationPoints) {
+    for(const auto& point: grid.integrationPoints) {
         os << point;
     }
     os << "Number of integration points: " << grid.nip;
