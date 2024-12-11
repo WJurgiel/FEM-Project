@@ -24,6 +24,7 @@ public:
     double getY() const;
     //This setter should be always called in constructor when reading BC
     void setBC(bool val);
+    bool getBC() const;
     friend std::ostream& operator<<(std::ostream& os, const Node& n);
 };
 inline std::ostream& operator<<(std::ostream& os, const Node& n) {

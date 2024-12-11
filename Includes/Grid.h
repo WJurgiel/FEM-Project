@@ -5,6 +5,7 @@
 #ifndef GRID_H
 #define GRID_H
 
+#include <ElemUniv.h>
 #include <ranges>
 
 #include "Includes.h"
@@ -24,6 +25,8 @@ private:
     Vector<Node> integrationPoints;
     Vector<double> wages;
 
+    ElemUniv& m_elem_univ;
+
     int nip;
 public:
     // Always call this function in the constructor -> without it elements won't know their nodes
@@ -35,13 +38,13 @@ public:
 
     //Constructors:
     //Please use this constructor when you are testing the program on custom values
-    Grid(Vector<Node> integrationPoints, Vector<double> wages);
+    Grid(Vector<Node> integrationPoints, Vector<double> wages, ElemUniv& elem_univ);
 
     // Please use this constructor when you want to make calculations with data from file
     /*normalize parameter = if input file has indexing starting with 1, type 1, if it's normal
             indexing convention (start id=0) type 0
     */
-    Grid(Vector<Node> integrationPoints,  Vector<double> wages,std::string fileName, int normalize=1);
+    Grid(Vector<Node> integrationPoints,  Vector<double> wages,std::string fileName, ElemUniv& elem_univ, int normalize=1);
 
     // Getters:
     int getNip() const;

@@ -25,3 +25,7 @@ Vector<Node> IntegrationPoints::getIP() const {
 Vector<double> IntegrationPoints::getWages() const {
     return wages;
 }
+
+int IntegrationPoints::getNIP() const {
+    return integrationPoints.size();
+}

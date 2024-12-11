@@ -31,6 +31,7 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
         elements[elem].calculateJacobians(nip, dN_dEta, dN_dKsi, elements[elem].getNodes());
         elements[elem].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
         elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
+        elements[elem].calculate_HBC_matrix(nip, globalData.getParameter("Conductivity"), m_elem_univ);
         elements[elem].calculate_H_final(nip, this->wages);
 #if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
@@ -103,23 +104,23 @@ void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi
 
 }
 
-Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages) {
+Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_univ): m_elem_univ(elem_univ) {
     //test constructor
-    nodes.emplace_back(0, 0,0);
-    nodes.emplace_back(1, 0.025,0);
-    nodes.emplace_back(2, 0.025,0.025);
-    nodes.emplace_back(3, 0,0.025);
+    nodes.emplace_back(0, 0, 0, true);
+    nodes.emplace_back(1, 0.025, 0, true);
+    nodes.emplace_back(2, 0.025, 0.025, true);
+    nodes.emplace_back(3, 0, 0.025, true);
     // Dla testu 2
     // nodes.emplace_back(0, 0.01,-0.01);
     // nodes.emplace_back(1, 0.025,0);
     // nodes.emplace_back(2, 0.025,0.025);
     // nodes.emplace_back(3, 0,0.025);
 
-    elements.push_back(Element(0,{0,1,2,3}));
+    elements.push_back(Element(0, {0, 1, 2, 3}));
 
     this->integrationPoints = integrationPoints;
 
-    globalData.setParameter("Conductivity",30);
+    globalData.setParameter("Conductivity", 25);
 
     this->wages = wages;
     nip = static_cast<int>(this->integrationPoints.size());
@@ -127,7 +128,7 @@ Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages) {
     assignNodesToElements();
 }
 
-Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string fileName, int normalize) {
+Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string fileName,ElemUniv& elem_univ, int normalize):m_elem_univ(elem_univ) {
     //configure integration points
     this->integrationPoints = integrationPoints;
     this->wages = wages;
@@ -191,8 +192,6 @@ Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string file
                     nodes[bcVal - normalize].setBC(true);
                     ss >> comma;
                 }
-
-
             }
             if (!isNodeSection && !isElementSection && !isBC) {
                 int value = std::stoi(tokens[1]);

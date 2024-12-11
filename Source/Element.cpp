@@ -4,6 +4,7 @@
 
 #include "Element.h"
 
+#include <ElemUniv.h>
 
 
 Element::Element(int id, Vector<int> nodeIDs) {
@@ -57,6 +58,31 @@ void Element::calculate_H_matrix(int nip, double conductivity) {
         }
         H_matrixes[ip] = conductivity * (L_dN_dx_mat + R_dN_dy_mat);
         H_matrixes[ip] = jacobianConstantsMatrixes[ip].getDeterminant() * H_matrixes[ip];
+    }
+}
+
+void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_univ) {
+    // for every surface
+        // check if has BC
+    // ElemUniv elem_univ()
+    //surface integration point count (n)
+    int nsip = static_cast<int>(sqrt(nip));
+
+    // N matrixes calculations - WORKS
+    for(int _surfID = 0; _surfID < 4; _surfID++ ) {
+        std::cout << "SURFACE: " << _surfID << std::endl;
+        elem_univ.surfaces[_surfID].N = Matrix<double>(nsip, Vector<double>(4));
+        for(int _sip = 0; _sip < nsip; _sip++) {
+            double eta = elem_univ.surfaces[_surfID].surfaceIntegPoints[_sip].getX();
+            double ksi = elem_univ.surfaces[_surfID].surfaceIntegPoints[_sip].getY();
+            std::cout << "Sip" << _sip << "Ksi: " << eta << " Eta: " << ksi << "\n";
+            elem_univ.surfaces[_surfID].N[_sip][0] = 0.25 * (1 - eta) * (1 - ksi);
+            elem_univ.surfaces[_surfID].N[_sip][1] = 0.25 * (1 + eta) * (1 - ksi);
+            elem_univ.surfaces[_surfID].N[_sip][2] = 0.25 * (1 + eta) * (1 + ksi);
+            elem_univ.surfaces[_surfID].N[_sip][3] = 0.25 * (1 - eta) * (1 + ksi);
+        }
+        std::cout << elem_univ.surfaces[_surfID].N;
+        std::cout << "\n";
     }
 }
 

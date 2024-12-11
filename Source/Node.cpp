@@ -34,3 +34,7 @@ double Node::getY() const {
 void Node::setBC(bool val) {
     this->isBC = val;
 }
+
+bool Node::getBC() const {
+    return isBC;
+}

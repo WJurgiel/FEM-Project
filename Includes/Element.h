@@ -5,6 +5,8 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
 
+#include <ElemUniv.h>
+
 #include "Includes.h"
 #include "Jacobian.h"
 #include "Node.h"
@@ -18,13 +20,15 @@ class Element {
     Matrix<double> dN_dx;
     Matrix<double> dN_dy;
     Vector<Matrix<double>> H_matrixes; // contains H_matrix for each of integration points
-    Matrix<double> H_final;
+    Matrix<double> H_final; // size: 4x4
+    Matrix<double> H_BC; // size: 4x4
 public:
     Element(int id, Vector<int> nodeIDs);
 
     void calculateJacobians(int nip, Matrix<double> dN_dEta, Matrix<double> dN_dKsi,  Vector<Node> elemNodes);
     void calculate_dN_dx_dy(int npc, Matrix<double> dN_dEta, Matrix<double> dN_dKsi);
     void calculate_H_matrix(int nip,double conductivity);
+    void calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elemUniv);
     void calculate_H_final(int nip, Vector<double> wages);
 
     void printJacobians(int nip) const;

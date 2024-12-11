@@ -5,22 +5,38 @@
 #ifndef ELEMUNIV_H
 #define ELEMUNIV_H
 
+#include <cmath>
+#include <IntegrationPoints.h>
 #include <iomanip>
 
 #include "Includes.h"
 #include "Node.h"
+//Surfaces correct with convention: reverse clockwise
+enum Surfaces {
+    TOP,
+    LEFT,
+    BOTTOM,
+    RIGHT
+};
 class ElemUniv {
 private:
     Matrix<double> dN_dEta;
     Matrix<double> dn_dKsi;
+    int nip;
 public:
-
-
-    ElemUniv(Vector<Node> integPoints, int npc);
+    ElemUniv(Vector<Node> integPoints, int nip);
 
     //Getters
     Matrix<double> & getdN_dEta();
     Matrix<double> & getdN_dKsi();
+
+    struct Surface {
+        // [INITIALIZED] contains the integration points on the surface (IntegrationPoints::NxSurface
+        Vector<Node> surfaceIntegPoints;
+        // [UNITIALIZED ON START] [sqrt(npc) x 4]
+        Matrix<double> N;
+    };
+    Surface surfaces[4];
 
     friend std::ostream& operator<<(std::ostream& os, const ElemUniv& elemUniv);
 };
