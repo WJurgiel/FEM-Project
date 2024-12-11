@@ -35,6 +35,7 @@ public:
         Vector<Node> surfaceIntegPoints;
         // [UNITIALIZED ON START] [sqrt(npc) x 4]
         Matrix<double> N;
+        double surfaceLength;
     };
     Surface surfaces[4];
 
