@@ -66,6 +66,7 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
         // check if has BC
     // ElemUniv elem_univ()
     //surface integration point count (n)
+    H_BC.resize(4, std::vector<double>(4, 0.0));
     int nsip = static_cast<int>(sqrt(nip));
 
     // N matrixes calculations - WORKS
@@ -99,6 +100,36 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
         edgeIDs.second = (edgeIDs.second >= Surfaces::RIGHT) ? 0 : edgeIDs.second + 1;
         std::cout << "Surface " << _surfID << ": " << elem_univ.surfaces[_surfID].surfaceLength << "\n";
     }
+
+    //calculate HBC
+    /*
+     * ISSUE: HBc local not calculated properly
+     */
+    Matrix<double> HBC_local(4, Vector<double>(4));
+    for(int _surfID = 0; _surfID < 4; _surfID++) {
+        for(int _sip = 0; _sip < nsip; _sip++) {
+            Matrix<double> L_N_mat(4, Vector<double>(4)); // {N}{N}^T
+            Matrix<double> R_N_mat(4, Vector<double>(4)); //{N}{N}^T
+            Matrix<double> N = elem_univ.surfaces[_surfID].N;
+            for(int row = 0;  row < 4;  row++) {
+                for(int col = 0; col < 4; col++) {
+                    L_N_mat[row][col] = N[_sip][row] * N[_sip][col];
+                    R_N_mat[row][col] = N[_sip][row] * N[_sip][col];
+                }
+            }
+            HBC_local = 25 * 1 * L_N_mat + R_N_mat;
+            // 1 is currently a wage taken from IntegrationPoints.constWages taken for 4 (2) integration points
+            //m_sideLength / 2 = det(jac)
+            // det(jac) * w * HbcLocal
+            double jac = elem_univ.surfaces[_surfID].surfaceLength / 2;
+            std::cout << "Jakobian: " << jac << "\n";
+            HBC_local = jac * 1 * HBC_local;
+            std::cout << "Surface " << _surfID << " pc " << _sip << ": \n" <<  HBC_local;
+            //Add to m_HBC
+            H_BC = H_BC + HBC_local;
+        }
+    }
+
 }
 
 void Element::calculate_H_final(int nip, Vector<double> wages) {
