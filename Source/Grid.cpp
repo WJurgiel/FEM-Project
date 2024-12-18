@@ -115,12 +115,12 @@ Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_u
     // nodes.emplace_back(1, 0.025,0);
     // nodes.emplace_back(2, 0.025,0.025);
     // nodes.emplace_back(3, 0,0.025);
-
+    globalData.setParameter("Conductivity", 25);
     elements.push_back(Element(0, {0, 1, 2, 3}));
 
     this->integrationPoints = integrationPoints;
 
-    globalData.setParameter("Conductivity", 25);
+
 
     this->wages = wages;
     nip = static_cast<int>(this->integrationPoints.size());

@@ -10,8 +10,6 @@
 Element::Element(int id, Vector<int> nodeIDs) {
     this->id = id;
     this->nodeIDs = nodeIDs;
-
-
 }
 
 void Element::calculateJacobians(int nip, Matrix<double> dN_dEta, Matrix<double> dN_dKsi, Vector<Node> elemNodes) {
@@ -122,7 +120,7 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
             //  w * alpha * HbcLocal
             std::cout << "Jakobian: " << jac << "\n";
             // replace 25 with alpha and 1 with wage
-            HBC_ip =  1 * 25 * HBC_ip;
+            HBC_ip = 1 * conductivity * HBC_ip;
             std::cout << "Surface " << _surfID << " pc " << _sip << ": \n" <<  HBC_ip;
             //Add to m_HBC
             HBC_surf = HBC_surf + HBC_ip;
@@ -197,6 +195,7 @@ Matrix<double> Element::getH_final() const {
 int Element::getID() const {
     return id;
 }
+
 
 
 void Element::setNodes(Vector<Node> nodes) {
