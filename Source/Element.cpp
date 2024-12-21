@@ -74,40 +74,38 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
     }
     // N matrixes calculations - WORKS
     for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++ ) {
-        std::cout << "SURFACE: " << _surfID << std::endl;
+        // std::cout << "SURFACE: " << _surfID << std::endl;
         elem_univ.surfaces[_surfID].N = Matrix<double>(nsip, Vector<double>(4));
         for(int _sip = 0; _sip < nsip; _sip++) {
             double eta = elem_univ.surfaces[_surfID].surfaceIntegPoints[_sip].getX();
             double ksi = elem_univ.surfaces[_surfID].surfaceIntegPoints[_sip].getY();
-            std::cout << "Sip" << _sip << "Ksi: " << eta << " Eta: " << ksi << "\n";
+            // std::cout << "Sip" << _sip << "Ksi: " << eta << " Eta: " << ksi << "\n";
             elem_univ.surfaces[_surfID].N[_sip][0] = 0.25 * (1 - eta) * (1 - ksi);
             elem_univ.surfaces[_surfID].N[_sip][1] = 0.25 * (1 + eta) * (1 - ksi);
             elem_univ.surfaces[_surfID].N[_sip][2] = 0.25 * (1 + eta) * (1 + ksi);
             elem_univ.surfaces[_surfID].N[_sip][3] = 0.25 * (1 - eta) * (1 + ksi);
         }
-        std::cout << elem_univ.surfaces[_surfID].N;
-        std::cout << "\n";
+        // std::cout << elem_univ.surfaces[_surfID].N;
+        // std::cout << "\n";
     }
 
     // calculate L (length) for jacobian for every surface
     // bottom: 2 3, right 3 0, top 0 1, left 1 2 - WORKS
-    std::cout << "Lengths:\n";
+    // std::cout << "Lengths:\n";
     std::pair<int,int> edgeIDs = {2,3};
     for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++) {
         edgeIDs.first = (2 + _surfID > 3) ? (2 + _surfID - 4) : 2+_surfID;
         edgeIDs.second = (3 + _surfID > 3) ? (3 + _surfID - 4) : 3+_surfID;
-        std::cout << "first edge: " << edgeIDs.first << " second edge: " << edgeIDs.second << std::endl;
+        // std::cout << "first edge: " << edgeIDs.first << " second edge: " << edgeIDs.second << std::endl;
         elem_univ.surfaces[_surfID].surfaceLength = sqrt(
               pow(nodes[edgeIDs.first].getX() - nodes[edgeIDs.second].getX(), 2) +
                   pow(nodes[edgeIDs.first].getY() - nodes[edgeIDs.second].getY(), 2)
                   );
-        std::cout << "Surface " << _surfID << ": " << elem_univ.surfaces[_surfID].surfaceLength << "\n";
+        // std::cout << "Surface " << _surfID << ": " << elem_univ.surfaces[_surfID].surfaceLength << "\n";
     }
 
 
     for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++) {
-        // 1 is currently a wage taken from IntegrationPoints.constWages taken for 4 (2) integration points
-        //m_sideLength / 2 = det(jac)
         if(!hasBC[_surfID]) {
             std::cout << "Skipped surface: " << _surfID << std::endl;
             continue;
@@ -127,17 +125,19 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
                 }
             }
             //  w * alpha * HbcLocal
-            std::cout << "Jakobian: " << jac << "\n";
-            HBC_ip = wages[_sip] * conductivity * HBC_ip;
-            std::cout << "Surface " << _surfID << " pc " << _sip << ": \n" <<  HBC_ip;
+            // std::cout << "wages: "<< wages;
+            // std::cout << "Jakobian: " << jac << "\n";
+            HBC_ip = wages[_sip] * 300 * HBC_ip;
+            // std::cout << "Surface " << _surfID << " pc " << _sip << ": \n" <<  HBC_ip;
             //Add to m_HBC
             HBC_surf = HBC_surf + HBC_ip;
         }
         HBC_surf = jac * HBC_surf;
         H_BC = H_BC + HBC_surf;
-        std::cout << " Hbc for surface = " << _surfID << ":\n" << HBC_surf << "\n";
+        // std::cout << " Hbc for surface = " << _surfID << ":\n" << HBC_surf << "\n";
     }
     std::cout << "FINAL HBC MATRIX:\n " << H_BC;
+    std::cout << "FINAL H (WITHOUT HBC)\n" << H_final;
 
 }
 

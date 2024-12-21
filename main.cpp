@@ -18,14 +18,14 @@ int main()
     IntegrationPoints ip(4);
     Timer timer;
     FileHandler::initDirectories();
-    // ElemUniv elem_univ(ip.getIP(), ip.getNIP());
-    // Grid FEM_grid(ip.getIP(), ip.getWages(), file1, elem_univ);
-    // FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
+    ElemUniv elem_univ(ip.getIP(), ip.getNIP());
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file1, elem_univ);
+    FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
 
     //-----test start----
-    ElemUniv testElemUniv(ip.getIP(), ip.getNIP());
-    Grid testGrid(ip.getIP(), ip.getWages(), testElemUniv);
-    testGrid.executeCalculations(testElemUniv.getdN_dEta(), testElemUniv.getdN_dKsi());
+    // ElemUniv testElemUniv(ip.getIP(), ip.getNIP());
+    // Grid testGrid(ip.getIP(), ip.getWages(), testElemUniv);
+    // testGrid.executeCalculations(testElemUniv.getdN_dEta(), testElemUniv.getdN_dKsi());
     // std::cout << testGrid;
 
     // Assigning nodes to surface - passed

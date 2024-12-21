@@ -31,8 +31,9 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
         elements[elem].calculateJacobians(nip, dN_dEta, dN_dKsi, elements[elem].getNodes());
         elements[elem].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
         elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
-        elements[elem].calculate_HBC_matrix(nip, globalData.getParameter("Conductivity"), m_elem_univ);
         elements[elem].calculate_H_final(nip, this->wages);
+        elements[elem].calculate_HBC_matrix(nip, globalData.getParameter("Conductivity"), m_elem_univ);
+
 #if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
 #endif
@@ -184,7 +185,7 @@ Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string file
                 char comma;
                 ss >> elems[0] >> comma >> elems[1] >> comma >> elems[2] >> comma >> elems[3] >> comma >> elems[4];
 
-                elements.push_back(Element{elems[0]-normalize, Vector<int>{elems[1]-normalize,elems[2]-normalize,elems[3]-normalize,elems[4]-normalize}, wages});
+                elements.push_back(Element{elems[0]-normalize, Vector<int>{elems[1]-normalize,elems[2]-normalize,elems[3]-normalize,elems[4]-normalize}, this->wages});
             }
             if (isBC) {
                 std::stringstream ss(line);
