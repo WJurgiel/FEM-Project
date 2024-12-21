@@ -59,7 +59,7 @@ void Element::calculate_H_matrix(int nip, double conductivity) {
     }
 }
 
-void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elem_univ) {
+void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elemuniv) {
     H_BC.resize(4, std::vector<double>(4, 0.0));
     bool hasBC[4] = {false, false, false, false};
     int nsip = static_cast<int>(sqrt(nip));
@@ -72,14 +72,14 @@ void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elem_univ) {
         std::cout << "HasBC[surfID = " << _surfID << "]" << hasBC[_surfID] << std::endl;
     }
     for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++ ) {
-        elem_univ.surfaces[_surfID].N = Matrix<double>(nsip, Vector<double>(4));
+        elemuniv.surfaces[_surfID].N = Matrix<double>(nsip, Vector<double>(4));
         for(int _sip = 0; _sip < nsip; _sip++) {
-            double eta = elem_univ.surfaces[_surfID].surfaceIntegPoints[_sip].getX();
-            double ksi = elem_univ.surfaces[_surfID].surfaceIntegPoints[_sip].getY();
-            elem_univ.surfaces[_surfID].N[_sip][0] = 0.25 * (1 - eta) * (1 - ksi);
-            elem_univ.surfaces[_surfID].N[_sip][1] = 0.25 * (1 + eta) * (1 - ksi);
-            elem_univ.surfaces[_surfID].N[_sip][2] = 0.25 * (1 + eta) * (1 + ksi);
-            elem_univ.surfaces[_surfID].N[_sip][3] = 0.25 * (1 - eta) * (1 + ksi);
+            double eta = elemuniv.surfaces[_surfID].surfaceIntegPoints[_sip].getX();
+            double ksi = elemuniv.surfaces[_surfID].surfaceIntegPoints[_sip].getY();
+            elemuniv.surfaces[_surfID].N[_sip][0] = 0.25 * (1 - eta) * (1 - ksi);
+            elemuniv.surfaces[_surfID].N[_sip][1] = 0.25 * (1 + eta) * (1 - ksi);
+            elemuniv.surfaces[_surfID].N[_sip][2] = 0.25 * (1 + eta) * (1 + ksi);
+            elemuniv.surfaces[_surfID].N[_sip][3] = 0.25 * (1 - eta) * (1 + ksi);
         }
     }
     // bottom: 2 3, right 3 0, top 0 1, left 1 2 - WORKS
@@ -87,24 +87,23 @@ void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elem_univ) {
     for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++) {
         edgeIDs.first = (2 + _surfID > 3) ? (2 + _surfID - 4) : 2+_surfID;
         edgeIDs.second = (3 + _surfID > 3) ? (3 + _surfID - 4) : 3+_surfID;
-        elem_univ.surfaces[_surfID].surfaceLength = sqrt(
+        elemuniv.surfaces[_surfID].surfaceLength = sqrt(
               pow(nodes[edgeIDs.first].getX() - nodes[edgeIDs.second].getX(), 2) +
                   pow(nodes[edgeIDs.first].getY() - nodes[edgeIDs.second].getY(), 2)
                   );
     }
     for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++) {
         if(!hasBC[_surfID]) {
-            std::cout << "Skipped surface: " << _surfID << std::endl;
             continue;
         }
-        double jac = elem_univ.surfaces[_surfID].surfaceLength / 2;
+        double jac = elemuniv.surfaces[_surfID].surfaceLength / 2;
         Matrix<double> HBC_ip(4, Vector<double>(4));
         Matrix<double> HBC_surf(4, Vector<double>(4));
 
         for(int _sip = 0; _sip < nsip; _sip++) {
             Vector<double> m_N_mat(4); // {N}{N}^T
             for(int i = 0; i < 4; i++) {
-                m_N_mat[i] = elem_univ.surfaces[_surfID].N[_sip][i];
+                m_N_mat[i] = elemuniv.surfaces[_surfID].N[_sip][i];
             }
             for(int row = 0;  row < 4;  row++) {
                 for(int col = 0; col < 4; col++) {
@@ -116,10 +115,29 @@ void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elem_univ) {
         }
         HBC_surf = jac * HBC_surf;
         H_BC = H_BC + HBC_surf;
+        calculate_P_Vector(nip, _surfID, 1200, alfa, elemuniv);
     }
-    std::cout << "FINAL HBC MATRIX:\n " << H_BC;
-    std::cout << "FINAL H (WITHOUT HBC)\n" << H_final;
 
+    // std::cout << "FINAL HBC MATRIX:\n " << H_BC;
+    // std::cout << "FINAL H (WITHOUT HBC)\n" << H_final;
+    std::cout << "FINAL P (WITHOUT HBC)\n" << P;
+
+}
+
+void Element::calculate_P_Vector(int nip, int surfID, double tot, double alfa, ElemUniv &elemUniv) {
+    P.resize(4);
+    int nsip = static_cast<int>(sqrt(nip));
+    Vector<double> P_surf(4);
+    double jac = elemUniv.surfaces[surfID].surfaceLength / 2;
+    std::cout << "Jaca dla P: "<< jac << "\n";
+    for(int _sip = 0; _sip < nsip; _sip++) {
+        Vector<double> P_sip(4);
+        Vector<double> current = elemUniv.surfaces[surfID].N[_sip];
+        P_sip = wages[_sip] * tot * current;
+        P_surf = P_surf + P_sip;
+    }
+    P_surf = alfa * jac * P_surf;
+    P = P + P_surf;
 }
 
 void Element::calculate_H_final(int nip, Vector<double> wages) {

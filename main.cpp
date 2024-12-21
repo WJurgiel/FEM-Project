@@ -19,7 +19,7 @@ int main()
     Timer timer;
     FileHandler::initDirectories();
     ElemUniv elem_univ(ip.getIP(), ip.getNIP());
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file2, elem_univ);
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file1, elem_univ);
     FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
 
     //-----test start----

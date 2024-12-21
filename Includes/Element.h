@@ -23,6 +23,7 @@ class Element {
     Vector<Matrix<double>> H_matrixes; // contains H_matrix for each of integration points
     Matrix<double> H_final; // size: 4x4
     Matrix<double> H_BC; // size: 4x4
+    Vector<double> P; // size: 4
 
 
 public:
@@ -31,8 +32,9 @@ public:
     void calculateJacobians(int nip, Matrix<double> dN_dEta, Matrix<double> dN_dKsi,  Vector<Node> elemNodes);
     void calculate_dN_dx_dy(int npc, Matrix<double> dN_dEta, Matrix<double> dN_dKsi);
     void calculate_H_matrix(int nip,double conductivity);
-    void calculate_HBC_matrix(int nip, double alfa, ElemUniv& elemUniv);
     void calculate_H_final(int nip, Vector<double> wages);
+    void calculate_HBC_matrix(int nip, double alfa, ElemUniv& elemUniv);
+    void calculate_P_Vector(int nip, int surfID, double tot, double alfa, ElemUniv& elemUniv );
 
     void printJacobians(int nip) const;
     void printMatrix(Matrix<double>);
