@@ -15,11 +15,11 @@ int main()
     std::string file1 = "../Input/Test1_4_4.txt";
     std::string file2 = "../Input/Test2_4_4_MixGrid.txt";
     std::string file3 = "../Input/Test3_31_31_kwadrat.txt";
-    IntegrationPoints ip(16);
+    IntegrationPoints ip(4);
     Timer timer;
     FileHandler::initDirectories();
     ElemUniv elem_univ(ip.getIP(), ip.getNIP());
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file1, elem_univ);
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file2, elem_univ);
     FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
 
     //-----test start----

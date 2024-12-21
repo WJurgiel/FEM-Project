@@ -5,58 +5,57 @@
 #include "ElemUniv.h"
 const Vector<Node> N4Surface = {
     // BOTTOM
-    Node(-0.57735, -1),   // Pc00
-    Node(0.57735,-1),   // Pc01
-    // RIGHT
-    Node(1,-0.57735),   //Pc10
-    Node(1,0.57735),   //Pc11
-    //TOP
     Node(0.57735, 1), //Pc20
     Node(-0.57735,1), //Pc21
-    //LEFT
+    // RIGHT
     Node(-1,0.57735),   //Pc30
     Node(-1,-0.57735),  //Pc31
+    //TOP
+    Node(-0.57735, -1),   // Pc00
+    Node(0.57735,-1),
+    //LEFT
+    Node(1,-0.57735),   //Pc10
+    Node(1,0.57735)
 };
 const Vector<Node> N9Surface = {
     //BOTTOM
-    Node(-0.7746, -1),
-    Node(0,-1),
-    Node(0.7746, -1),
-    //RIGHT
-    Node(1,-0.7746),
-    Node(1,0),
-    Node(1,0.7746),
-    //TOP
     Node(0.7746, 1),
     Node(0,1),
     Node(-0.7746, 1),
-    //LEFT
+    //RIGHT
     Node(-1, 0.7746),
     Node(-1, 0),
-    Node(-1,-0.7746)
+    Node(-1,-0.7746),
+    //TOP
+    Node(-0.7746, -1),
+    Node(0,-1),
+    Node(0.7746, -1),
+    //LEFT
+    Node(1,-0.7746),
+    Node(1,0),
+    Node(1,0.7746)
 };
 const Vector<Node> N16Surface = {
     //BOTTOM
-    Node(-0.861136, -1),
-    Node(-0.339981, -1),
-    Node(0.339981, -1),
-    Node(0.861136, -1),
-    //RIGHT
-    Node(1, -0.861136),
-    Node(1, -0.339981),
-    Node(1, 0.339981),
-    Node(1, 0.861136),
-    //TOP
     Node(0.861136, 1),
     Node(0.339981, 1),
     Node(-0.339981, 1),
     Node(-0.861136, 1),
-    //LEFT
+    //RIGHT
     Node(-1, 0.861136),
     Node(-1, 0.339981),
     Node(-1, -0.339981),
     Node(-1, -0.861136),
-
+    //TOP
+    Node(-0.861136, -1),
+    Node(-0.339981, -1),
+    Node(0.339981, -1),
+    Node(0.861136, -1),
+    //LEFT
+    Node(1, -0.861136),
+    Node(1, -0.339981),
+    Node(1, 0.339981),
+    Node(1, 0.861136)
 };
 ElemUniv::ElemUniv(Vector<Node> integPoints, int nip) {
     dN_dEta.resize(nip, std::vector<double>(4)); // 4 columns because you're accessing dN_dEta[ip][0] to dN_dEta[ip][3]
