@@ -120,6 +120,8 @@ Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_u
     // nodes.emplace_back(3, 0,0.025);
     globalData.setParameter("Alfa", 25);
     globalData.setParameter("Tot", 1200);
+    globalData.setParameter("SpecificHeat", 700);
+    globalData.setParameter("Density", 7800);
     elements.push_back(Element(0, {0, 1, 2, 3},this->wages));
 
     this->integrationPoints = integrationPoints;

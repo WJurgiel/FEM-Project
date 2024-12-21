@@ -153,7 +153,21 @@ void Element::calculate_C_matrix(int nip, double specificHeat, double density, V
         N[_ip][2] = 0.25 * (1+integPoints[_ip].getX()) * (1+integPoints[_ip].getY());
         N[_ip][3] = 0.25 * (1-integPoints[_ip].getX()) * (1+integPoints[_ip].getY());
     }
+    for(int _ip = 0; _ip < nip; _ip++) {
+        Matrix<double> C_ip(4, Vector<double>(4));
+        Vector<double> N_current = N[_ip];
+        for(int row = 0;  row < 4;  row++) {
+            for(int col = 0; col < 4; col++) {
+                C_ip[row][col] = N_current[row] * N_current[col];
+            }
+        }
+        std::cout << "C final after iteration " << _ip << "\n";
+        C_ip = specificHeat * density * jacobianConstantsMatrixes[_ip].getDeterminant() * C_ip;
 
+        // H_final = H_final + (wages[ip % wages.size()]* wages[ip / wages.size()] * H_matrixes[ip]);
+        C = C + (wages[_ip%wages.size()] * wages[_ip/wages.size()] * C_ip);
+        std::cout << C << "\n";
+    }
 }
 
 void Element::calculate_H_final(int nip, Vector<double> wages) {
