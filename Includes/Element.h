@@ -14,6 +14,7 @@
 // The encapsulation problem will be potentially solved soon...
 class Element {
     int id;
+    Vector<double>& wages;
     Vector<int> nodeIDs;
     Vector<Node> nodes;
     Vector<Jacobian> jacobianConstantsMatrixes; // each jacobian matrix for each of the integration points
@@ -22,8 +23,10 @@ class Element {
     Vector<Matrix<double>> H_matrixes; // contains H_matrix for each of integration points
     Matrix<double> H_final; // size: 4x4
     Matrix<double> H_BC; // size: 4x4
+
+
 public:
-    Element(int id, Vector<int> nodeIDs);
+    Element(int id, Vector<int> nodeIDs, Vector<double>& wages);
 
     void calculateJacobians(int nip, Matrix<double> dN_dEta, Matrix<double> dN_dKsi,  Vector<Node> elemNodes);
     void calculate_dN_dx_dy(int npc, Matrix<double> dN_dEta, Matrix<double> dN_dKsi);

@@ -101,20 +101,4 @@ public:
     static Vector<Node> N4Surface;
 };
 
-// Vector<Node> IntegrationPoints::N4Surface = {
-//     //TOP
-//     Node(0.57735, 1), //Pc20
-//     Node(-0.57735,1), //Pc21
-//     //LEFT
-//     Node(-1,0.57735),   //Pc30
-//     Node(-1,-0.57735),  //Pc31
-//     // BOTTOM
-//     Node(-0.57735, -1),   // Pc00
-//     Node(0.57735,-1),   // Pc01
-//     // RIGHT
-//     Node(1,-0.57735),   //Pc10
-//     Node(1,0.57735),   //Pc11
-//
-// };
-
 #endif //INTEGRATIONPOINTS_H

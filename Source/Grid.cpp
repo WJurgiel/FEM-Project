@@ -106,6 +106,8 @@ void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi
 
 Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_univ): m_elem_univ(elem_univ) {
     //test constructor
+    this->wages = wages;
+
     nodes.emplace_back(0, 0, 0, true);
     nodes.emplace_back(1, 0.025, 0, true);
     nodes.emplace_back(2, 0.025, 0.025, true);
@@ -116,13 +118,13 @@ Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_u
     // nodes.emplace_back(2, 0.025,0.025);
     // nodes.emplace_back(3, 0,0.025);
     globalData.setParameter("Conductivity", 25);
-    elements.push_back(Element(0, {0, 1, 2, 3}));
+    elements.push_back(Element(0, {0, 1, 2, 3},this->wages));
 
     this->integrationPoints = integrationPoints;
 
 
 
-    this->wages = wages;
+
     nip = static_cast<int>(this->integrationPoints.size());
 
     assignNodesToElements();
@@ -182,7 +184,7 @@ Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string file
                 char comma;
                 ss >> elems[0] >> comma >> elems[1] >> comma >> elems[2] >> comma >> elems[3] >> comma >> elems[4];
 
-                elements.push_back(Element{elems[0]-normalize, Vector<int>{elems[1]-normalize,elems[2]-normalize,elems[3]-normalize,elems[4]-normalize}});
+                elements.push_back(Element{elems[0]-normalize, Vector<int>{elems[1]-normalize,elems[2]-normalize,elems[3]-normalize,elems[4]-normalize}, wages});
             }
             if (isBC) {
                 std::stringstream ss(line);

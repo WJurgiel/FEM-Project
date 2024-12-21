@@ -18,24 +18,24 @@ int main()
     IntegrationPoints ip(4);
     Timer timer;
     FileHandler::initDirectories();
-    // Grid FEM_grid(ip.getIP(), ip.getWages(), file1);
-    // ElemUniv elem_univ(FEM_grid.getIntegrationPoints(), FEM_grid.getNip());
+    // ElemUniv elem_univ(ip.getIP(), ip.getNIP());
+    // Grid FEM_grid(ip.getIP(), ip.getWages(), file1, elem_univ);
+    // FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
 
     //-----test start----
     ElemUniv testElemUniv(ip.getIP(), ip.getNIP());
     Grid testGrid(ip.getIP(), ip.getWages(), testElemUniv);
-
     testGrid.executeCalculations(testElemUniv.getdN_dEta(), testElemUniv.getdN_dKsi());
     // std::cout << testGrid;
 
     // Assigning nodes to surface - passed
-    int surf = Surfaces::TOP;
-    for(const auto& x: testElemUniv.surfaces) {
-        std::cout << surf++ << std::endl;
-        for(const auto& ip: x.surfaceIntegPoints) {
-            std::cout << ip << std::endl;
-        }
-    }
+    // int surf = Surfaces::BOTTOM;
+    // for(const auto& x: testElemUniv.surfaces) {
+    //     std::cout << surf++ << std::endl;
+    //     for(const auto& ip: x.surfaceIntegPoints) {
+    //         std::cout << ip << std::endl;
+    //     }
+    // }
 
 
 

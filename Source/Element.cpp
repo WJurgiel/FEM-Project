@@ -7,7 +7,7 @@
 #include <ElemUniv.h>
 
 
-Element::Element(int id, Vector<int> nodeIDs) {
+Element::Element(int id, Vector<int> nodeIDs, Vector<double>& wages) : wages(wages) {
     this->id = id;
     this->nodeIDs = nodeIDs;
 }
@@ -60,15 +60,20 @@ void Element::calculate_H_matrix(int nip, double conductivity) {
 }
 
 void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_univ) {
-    // for every surface
-        // check if has BC
-    // ElemUniv elem_univ()
-    //surface integration point count (n)
     H_BC.resize(4, std::vector<double>(4, 0.0));
+    bool hasBC[4] = {false, false, false, false};
     int nsip = static_cast<int>(sqrt(nip));
 
+    //Checking if the surface has boundary condition (two Nodes with isBC == true)
+    /*Bottom: Nodes [2] [3], Right: [3][0], Top[0][1], Left[1][2]*/
+    for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++) {
+        int firstID = (2 + _surfID > 3) ? (2 + _surfID - 4) : 2+_surfID;
+        int secondID = (3 + _surfID > 3) ? (3 + _surfID - 4) : 3+_surfID;
+        hasBC[_surfID] = nodes[firstID].getBC() && nodes[secondID].getBC();
+        std::cout << "HasBC[surfID = " << _surfID << "]" << hasBC[_surfID] << std::endl;
+    }
     // N matrixes calculations - WORKS
-    for(int _surfID = 0; _surfID < 4; _surfID++ ) {
+    for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++ ) {
         std::cout << "SURFACE: " << _surfID << std::endl;
         elem_univ.surfaces[_surfID].N = Matrix<double>(nsip, Vector<double>(4));
         for(int _sip = 0; _sip < nsip; _sip++) {
@@ -85,24 +90,28 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
     }
 
     // calculate L (length) for jacobian for every surface
-    // top: 0 1, left 1 2, bottom 2 3, right 3 0 - WORKS
-    std::cout << "Lengths:";
-    std::pair<int,int> edgeIDs = {0,1};
+    // bottom: 2 3, right 3 0, top 0 1, left 1 2 - WORKS
+    std::cout << "Lengths:\n";
+    std::pair<int,int> edgeIDs = {2,3};
     for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++) {
+        edgeIDs.first = (2 + _surfID > 3) ? (2 + _surfID - 4) : 2+_surfID;
+        edgeIDs.second = (3 + _surfID > 3) ? (3 + _surfID - 4) : 3+_surfID;
         std::cout << "first edge: " << edgeIDs.first << " second edge: " << edgeIDs.second << std::endl;
         elem_univ.surfaces[_surfID].surfaceLength = sqrt(
               pow(nodes[edgeIDs.first].getX() - nodes[edgeIDs.second].getX(), 2) +
                   pow(nodes[edgeIDs.first].getY() - nodes[edgeIDs.second].getY(), 2)
                   );
-        edgeIDs.first++;
-        edgeIDs.second = (edgeIDs.second >= Surfaces::LEFT) ? 0 : edgeIDs.second + 1;
         std::cout << "Surface " << _surfID << ": " << elem_univ.surfaces[_surfID].surfaceLength << "\n";
     }
 
 
-    for(int _surfID = 0; _surfID < 4; _surfID++) {
+    for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++) {
         // 1 is currently a wage taken from IntegrationPoints.constWages taken for 4 (2) integration points
         //m_sideLength / 2 = det(jac)
+        if(!hasBC[_surfID]) {
+            std::cout << "Skipped surface: " << _surfID << std::endl;
+            continue;
+        }
         double jac = elem_univ.surfaces[_surfID].surfaceLength / 2;
         Matrix<double> HBC_ip(4, Vector<double>(4));
         Matrix<double> HBC_surf(4, Vector<double>(4));
@@ -119,8 +128,7 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
             }
             //  w * alpha * HbcLocal
             std::cout << "Jakobian: " << jac << "\n";
-            // replace 25 with alpha and 1 with wage
-            HBC_ip = 1 * conductivity * HBC_ip;
+            HBC_ip = wages[_sip] * conductivity * HBC_ip;
             std::cout << "Surface " << _surfID << " pc " << _sip << ": \n" <<  HBC_ip;
             //Add to m_HBC
             HBC_surf = HBC_surf + HBC_ip;
@@ -130,8 +138,6 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
         std::cout << " Hbc for surface = " << _surfID << ":\n" << HBC_surf << "\n";
     }
     std::cout << "FINAL HBC MATRIX:\n " << H_BC;
-
-
 
 }
 
