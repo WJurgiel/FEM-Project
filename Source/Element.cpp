@@ -88,14 +88,14 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
     // top: 0 1, left 1 2, bottom 2 3, right 3 0 - WORKS
     std::cout << "Lengths:";
     std::pair<int,int> edgeIDs = {0,1};
-    for(int _surfID = Surfaces::TOP; _surfID < 4; _surfID++) {
+    for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++) {
         std::cout << "first edge: " << edgeIDs.first << " second edge: " << edgeIDs.second << std::endl;
         elem_univ.surfaces[_surfID].surfaceLength = sqrt(
               pow(nodes[edgeIDs.first].getX() - nodes[edgeIDs.second].getX(), 2) +
                   pow(nodes[edgeIDs.first].getY() - nodes[edgeIDs.second].getY(), 2)
                   );
         edgeIDs.first++;
-        edgeIDs.second = (edgeIDs.second >= Surfaces::RIGHT) ? 0 : edgeIDs.second + 1;
+        edgeIDs.second = (edgeIDs.second >= Surfaces::LEFT) ? 0 : edgeIDs.second + 1;
         std::cout << "Surface " << _surfID << ": " << elem_univ.surfaces[_surfID].surfaceLength << "\n";
     }
 

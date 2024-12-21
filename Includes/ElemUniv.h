@@ -13,10 +13,10 @@
 #include "Node.h"
 //Surfaces correct with convention: reverse clockwise
 enum Surfaces {
-    TOP,
-    LEFT,
     BOTTOM,
-    RIGHT
+    RIGHT,
+    TOP,
+    LEFT
 };
 class ElemUniv {
 private:
