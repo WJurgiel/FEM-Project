@@ -18,14 +18,14 @@ int main()
     IntegrationPoints ip(4);
     Timer timer;
     FileHandler::initDirectories();
-    ElemUniv elem_univ(ip.getIP(), ip.getNIP());
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file2, elem_univ);
-    FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
+    // ElemUniv elem_univ(ip.getIP(), ip.getNIP());
+    // Grid FEM_grid(ip.getIP(), ip.getWages(), file2, elem_univ);
+    // FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
 
     //-----test start----
-    // ElemUniv testElemUniv(ip.getIP(), ip.getNIP());
-    // Grid testGrid(ip.getIP(), ip.getWages(), testElemUniv);
-    // testGrid.executeCalculations(testElemUniv.getdN_dEta(), testElemUniv.getdN_dKsi());
+    ElemUniv testElemUniv(ip.getIP(), ip.getNIP());
+    Grid testGrid(ip.getIP(), ip.getWages(), testElemUniv);
+    testGrid.executeCalculations(testElemUniv.getdN_dEta(), testElemUniv.getdN_dKsi());
     // std::cout << testGrid;
 
     // Assigning nodes to surface - passed
@@ -69,12 +69,12 @@ int main()
     timer.stop();
 #endif
 
-    GlobalSystemEquation globalSystemEquation;
+    // GlobalSystemEquation globalSystemEquation;
     // std::cout << FEM_grid;
     // //Uncomment code below to call aggregation
-    aggregation(FEM_grid, globalSystemEquation);
+    // aggregation(FEM_grid, globalSystemEquation);
     // std::cout<<globalSystemEquation;
-    globalSystemEquation.solveT();
+    // globalSystemEquation.solveT();
     std::cout << timer;
     return 0;
 

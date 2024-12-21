@@ -33,6 +33,7 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
         elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
         elements[elem].calculate_H_final(nip, this->wages);
         elements[elem].calculate_HBC_matrix(nip, globalData.getParameter("Alfa"), m_elem_univ);
+        elements[elem].calculate_C_matrix(nip, globalData.getParameter("SpecificHeat"), globalData.getParameter("Density"), integrationPoints);
 #if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
 #endif

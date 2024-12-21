@@ -142,6 +142,20 @@ void Element::calculate_P_Vector(int nip, int surfID, double tot, double alfa, E
     P = P + P_surf;
 }
 
+void Element::calculate_C_matrix(int nip, double specificHeat, double density, Vector<Node>& integPoints) {
+    // calculate N in integration points
+    std::cout << "Integration points: \n";
+    std::cout << integPoints;
+    Matrix<double> N(nip, Vector<double>(4));
+    for(int _ip = 0; _ip < nip; _ip++) {
+        N[_ip][0] = 0.25 * (1-integPoints[_ip].getX()) * (1-integPoints[_ip].getY());
+        N[_ip][1] = 0.25 * (1+integPoints[_ip].getX()) * (1-integPoints[_ip].getY());
+        N[_ip][2] = 0.25 * (1+integPoints[_ip].getX()) * (1+integPoints[_ip].getY());
+        N[_ip][3] = 0.25 * (1-integPoints[_ip].getX()) * (1+integPoints[_ip].getY());
+    }
+
+}
+
 void Element::calculate_H_final(int nip, Vector<double> wages) {
     H_final.resize(H_matrixes[0].size(), Vector<double>(H_matrixes[0][0].size()));
 
