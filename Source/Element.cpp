@@ -59,7 +59,7 @@ void Element::calculate_H_matrix(int nip, double conductivity) {
     }
 }
 
-void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_univ) {
+void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elem_univ) {
     H_BC.resize(4, std::vector<double>(4, 0.0));
     bool hasBC[4] = {false, false, false, false};
     int nsip = static_cast<int>(sqrt(nip));
@@ -74,19 +74,19 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
     }
     // N matrixes calculations - WORKS
     for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++ ) {
-        // std::cout << "SURFACE: " << _surfID << std::endl;
+        std::cout << "SURFACE: " << _surfID << std::endl;
         elem_univ.surfaces[_surfID].N = Matrix<double>(nsip, Vector<double>(4));
         for(int _sip = 0; _sip < nsip; _sip++) {
             double eta = elem_univ.surfaces[_surfID].surfaceIntegPoints[_sip].getX();
             double ksi = elem_univ.surfaces[_surfID].surfaceIntegPoints[_sip].getY();
-            // std::cout << "Sip" << _sip << "Ksi: " << eta << " Eta: " << ksi << "\n";
+            std::cout << "Sip" << _sip << "Ksi: " << eta << " Eta: " << ksi << "\n";
             elem_univ.surfaces[_surfID].N[_sip][0] = 0.25 * (1 - eta) * (1 - ksi);
             elem_univ.surfaces[_surfID].N[_sip][1] = 0.25 * (1 + eta) * (1 - ksi);
             elem_univ.surfaces[_surfID].N[_sip][2] = 0.25 * (1 + eta) * (1 + ksi);
             elem_univ.surfaces[_surfID].N[_sip][3] = 0.25 * (1 - eta) * (1 + ksi);
         }
-        // std::cout << elem_univ.surfaces[_surfID].N;
-        // std::cout << "\n";
+        std::cout << elem_univ.surfaces[_surfID].N;
+        std::cout << "\n";
     }
 
     // calculate L (length) for jacobian for every surface
@@ -127,7 +127,7 @@ void Element::calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elem_
             //  w * alpha * HbcLocal
             // std::cout << "wages: "<< wages;
             // std::cout << "Jakobian: " << jac << "\n";
-            HBC_ip = wages[_sip] * 300 * HBC_ip;
+            HBC_ip = wages[_sip] * alfa * HBC_ip;
             // std::cout << "Surface " << _surfID << " pc " << _sip << ": \n" <<  HBC_ip;
             //Add to m_HBC
             HBC_surf = HBC_surf + HBC_ip;

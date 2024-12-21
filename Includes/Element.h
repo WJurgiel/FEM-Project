@@ -31,7 +31,7 @@ public:
     void calculateJacobians(int nip, Matrix<double> dN_dEta, Matrix<double> dN_dKsi,  Vector<Node> elemNodes);
     void calculate_dN_dx_dy(int npc, Matrix<double> dN_dEta, Matrix<double> dN_dKsi);
     void calculate_H_matrix(int nip,double conductivity);
-    void calculate_HBC_matrix(int nip, double conductivity, ElemUniv& elemUniv);
+    void calculate_HBC_matrix(int nip, double alfa, ElemUniv& elemUniv);
     void calculate_H_final(int nip, Vector<double> wages);
 
     void printJacobians(int nip) const;

@@ -32,7 +32,7 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
         elements[elem].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
         elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
         elements[elem].calculate_H_final(nip, this->wages);
-        elements[elem].calculate_HBC_matrix(nip, globalData.getParameter("Conductivity"), m_elem_univ);
+        elements[elem].calculate_HBC_matrix(nip, globalData.getParameter("Alfa"), m_elem_univ);
 
 #if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
@@ -118,7 +118,7 @@ Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_u
     // nodes.emplace_back(1, 0.025,0);
     // nodes.emplace_back(2, 0.025,0.025);
     // nodes.emplace_back(3, 0,0.025);
-    globalData.setParameter("Conductivity", 25);
+    globalData.setParameter("Alfa", 25);
     elements.push_back(Element(0, {0, 1, 2, 3},this->wages));
 
     this->integrationPoints = integrationPoints;

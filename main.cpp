@@ -15,7 +15,7 @@ int main()
     std::string file1 = "../Input/Test1_4_4.txt";
     std::string file2 = "../Input/Test2_4_4_MixGrid.txt";
     std::string file3 = "../Input/Test3_31_31_kwadrat.txt";
-    IntegrationPoints ip(4);
+    IntegrationPoints ip(16);
     Timer timer;
     FileHandler::initDirectories();
     ElemUniv elem_univ(ip.getIP(), ip.getNIP());
