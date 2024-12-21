@@ -54,8 +54,20 @@ inline Matrix<double> operator*(const double& n, const Matrix<double>& mat) {
     }
     return result;
 }
-
-
+inline Vector<double> operator*(const double& n, const Vector<double>& vec) {
+    Vector<double> result(vec.size());
+    for(size_t i = 0; i < vec.size(); ++i) {
+        result[i] = n * vec[i];
+    }
+    return result;
+}
+inline Vector<double> operator+(const Vector<double>& a, const Vector<double>& b) {
+    Vector<double> result(a.size());
+    for(size_t i = 0; i < a.size(); ++i) {
+        result[i] = a[i] + b[i];
+    }
+    return result;
+}
 inline Vector<std::string> split(const std::string& str, char delim) {
     std::stringstream ss(str);
     std::string token;
