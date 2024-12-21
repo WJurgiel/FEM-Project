@@ -21,3 +21,9 @@ std::ostream& operator<<(std::ostream& os, const GlobalSystemEquation& eqn) {
     os << "\n";
     return os;
 }
+
+void GlobalSystemEquation::solveT() {
+    T_vector = gaussElimination(H_global,P_global);
+    std::cout<< "Vectooor T:\n";
+    std::cout << T_vector;
+}

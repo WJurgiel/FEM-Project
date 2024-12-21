@@ -121,6 +121,8 @@ void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elemuniv) {
     // std::cout << "FINAL HBC MATRIX:\n " << H_BC;
     // std::cout << "FINAL H (WITHOUT HBC)\n" << H_final;
     std::cout << "FINAL P (WITHOUT HBC)\n" << P;
+    H_final = H_final + H_BC;
+    std::cout << "FINAL H\n" << H_final;
 
 }
 

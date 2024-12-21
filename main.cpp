@@ -19,7 +19,7 @@ int main()
     Timer timer;
     FileHandler::initDirectories();
     ElemUniv elem_univ(ip.getIP(), ip.getNIP());
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file1, elem_univ);
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file2, elem_univ);
     FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
 
     //-----test start----
@@ -73,7 +73,8 @@ int main()
     // std::cout << FEM_grid;
     // //Uncomment code below to call aggregation
     aggregation(FEM_grid, globalSystemEquation);
-    std::cout<<globalSystemEquation;
+    // std::cout<<globalSystemEquation;
+    globalSystemEquation.solveT();
     std::cout << timer;
     return 0;
 

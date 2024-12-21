@@ -14,6 +14,7 @@ class GlobalSystemEquation {
 private:
     Matrix<double> H_global;
     Vector<double> P_global;
+    Vector<double> T_vector;
 public:
     Matrix<double>& getHGlobalRef() {
         return H_global;
@@ -24,6 +25,7 @@ public:
     void initializeGlobalMatrixes(int size) {
         H_global = Matrix<double>(size, std::vector<double>(size, 0.0));
         P_global = Vector<double>(size);
+
     }
     void updateHGlobal(int posX, int posY, double val) {
         H_global[posX][posY] += val;
@@ -31,7 +33,7 @@ public:
     void updatePGlobal(int posX, double val) {
         P_global[posX] += val;
     }
-
+    void solveT();
     friend std::ostream& operator<<(std::ostream& os, const GlobalSystemEquation& eqn);
 };
 // GlobalSystemEquation and Grid must exist, counts the HGlobal in GlobalSystemEquation
