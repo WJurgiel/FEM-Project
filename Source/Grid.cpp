@@ -6,6 +6,14 @@
 
 #include <filesystem>
 #include "FileHandler.h"
+
+void Grid::assignStartTemperature() {
+    double startTemp = globalData.getParameter("Tot");
+    for(auto& node : nodes) {
+        node.setTemperature(startTemp);
+    }
+}
+
 void Grid::assignNodesToElements() {
     for(int elem = 0; elem < elements.size(); ++elem) {
         Vector<Node> newNodes;
@@ -17,8 +25,6 @@ void Grid::assignNodesToElements() {
 }
 
 void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi) {
-
-
     std::cout << "nip: " << nip << "\n";
     FileHandler::clearOutputDirectory();
     FileHandler::initDirectories();
@@ -131,6 +137,7 @@ Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_u
 
     nip = static_cast<int>(this->integrationPoints.size());
 
+    assignStartTemperature();
     assignNodesToElements();
 }
 
@@ -210,8 +217,9 @@ Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string file
         std::cout << e.what() << std::endl;
     }
 
-    //configure Elements
+    //configure Elements and nodes
     try {
+        assignStartTemperature();
         assignNodesToElements();
     }catch(std::exception& e) {
         std::cout << e.what() << std::endl;

@@ -19,6 +19,13 @@ std::ostream& operator<<(std::ostream& os, const GlobalSystemEquation& eqn) {
         os << x << " ";
     }
     os << "\n";
+    os << "C Global:\n";
+    for(auto x : eqn.C_global) {
+        for (auto y : x) {
+            os << y << " ";
+        }
+        os << "\n";
+    }
     return os;
 }
 

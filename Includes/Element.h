@@ -47,6 +47,7 @@ public:
     Vector<Jacobian> getJacobianConstantsMatrixes() const;
     Vector<Matrix<double>> getH_matrixes() const;
     Matrix<double> getH_final() const;
+    Matrix<double> getC() const;
     Vector<double> getP() const;
     int getID() const;
 

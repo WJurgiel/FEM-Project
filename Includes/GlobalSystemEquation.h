@@ -14,6 +14,7 @@ class GlobalSystemEquation {
 private:
     Matrix<double> H_global;
     Vector<double> P_global;
+    Matrix<double> C_global;
     Vector<double> T_vector;
 public:
     Matrix<double>& getHGlobalRef() {
@@ -22,13 +23,21 @@ public:
     Vector<double>& getPGlobalRef() {
         return P_global;
     }
+
+    Matrix<double>& getCGlobalRef() {
+        return C_global;
+    }
     void initializeGlobalMatrixes(int size) {
-        H_global = Matrix<double>(size, std::vector<double>(size, 0.0));
+        H_global = Matrix<double>(size, Vector<double>(size, 0.0));
+        C_global = Matrix<double>(size, Vector<double>(size,0.0));
         P_global = Vector<double>(size);
 
     }
     void updateHGlobal(int posX, int posY, double val) {
         H_global[posX][posY] += val;
+    }
+    void updateCGlobal(int posX, int posY, double val) {
+        C_global[posX][posY] += val;
     }
     void updatePGlobal(int posX, double val) {
         P_global[posX] += val;
@@ -50,17 +59,20 @@ inline void aggregation(const Grid& grid, GlobalSystemEquation& eq) {
     for(int i = 0; i < grid.getElementCount(); i++) {
         const Element& currentElem = grid.getElement(i);
 
-        const Matrix<double>& currentHFinal = currentElem.getH_final();
+        const Matrix<double> currentHFinal = currentElem.getH_final();
+        const Matrix<double> currentCFinal = currentElem.getC();
         const Vector<double> currentP = currentElem.getP();
         const Vector<int>& currentNodeIds = currentElem.getNodeIDs();
         // Take local H_local = elem(i).getHFinal
         const Matrix<double>& H_local = currentHFinal;
+        const Matrix<double>& C_local = currentCFinal;
         const Vector<double>& P_local = currentP;
 
         // each element has 4 nodes
         for(int rowID = 0; rowID < 4; rowID++) {
             for(int colID = 0; colID < 4; colID++) {
                 eq.updateHGlobal(currentNodeIds[rowID],currentNodeIds[colID], H_local[rowID][colID]);
+                eq.updateCGlobal(currentNodeIds[rowID],currentNodeIds[colID], C_local[rowID][colID]);
             }
             eq.updatePGlobal(currentNodeIds[rowID],P_local[rowID]);
         }

@@ -161,13 +161,14 @@ void Element::calculate_C_matrix(int nip, double specificHeat, double density, V
                 C_ip[row][col] = N_current[row] * N_current[col];
             }
         }
-        std::cout << "C final after iteration " << _ip << "\n";
         C_ip = specificHeat * density * jacobianConstantsMatrixes[_ip].getDeterminant() * C_ip;
 
         // H_final = H_final + (wages[ip % wages.size()]* wages[ip / wages.size()] * H_matrixes[ip]);
         C = C + (wages[_ip%wages.size()] * wages[_ip/wages.size()] * C_ip);
-        std::cout << C << "\n";
+
     }
+    std::cout << "C matrix\n";
+    std::cout << C << "\n";
 }
 
 void Element::calculate_H_final(int nip, Vector<double> wages) {
@@ -225,6 +226,10 @@ Vector<Matrix<double>> Element::getH_matrixes() const {
 
 Matrix<double> Element::getH_final() const {
     return H_final;
+}
+
+Matrix<double> Element::getC() const {
+    return C;
 }
 
 Vector<double> Element::getP() const {

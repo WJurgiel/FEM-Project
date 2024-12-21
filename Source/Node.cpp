@@ -35,6 +35,10 @@ void Node::setBC(bool val) {
     this->isBC = val;
 }
 
+void Node::setTemperature(double Tot) {
+    temperature = Tot;
+}
+
 bool Node::getBC() const {
     return isBC;
 }
