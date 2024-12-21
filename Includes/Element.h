@@ -23,7 +23,7 @@ class Element {
     Vector<Matrix<double>> H_matrixes; // contains H_matrix for each of integration points
     Matrix<double> H_final; // size: 4x4
     Matrix<double> H_BC; // size: 4x4
-    Vector<double> P; // size: 4
+    Vector<double> P = Vector<double>(4,0); // size: 4
 
 
 public:
@@ -47,6 +47,7 @@ public:
     Vector<Jacobian> getJacobianConstantsMatrixes() const;
     Vector<Matrix<double>> getH_matrixes() const;
     Matrix<double> getH_final() const;
+    Vector<double> getP() const;
     int getID() const;
 
     //Setters

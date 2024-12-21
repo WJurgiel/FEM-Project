@@ -71,12 +71,9 @@ int main()
 
     GlobalSystemEquation globalSystemEquation;
     // std::cout << FEM_grid;
-    //Uncomment code below to call aggregation
-    // aggregation(FEM_grid, globalSystemEquation);
-    // std::cout << globalSystemEquation;
-    //
-    // std::cout << elem_univ;
-
+    // //Uncomment code below to call aggregation
+    aggregation(FEM_grid, globalSystemEquation);
+    std::cout<<globalSystemEquation;
     std::cout << timer;
     return 0;
 

@@ -125,7 +125,7 @@ void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elemuniv) {
 }
 
 void Element::calculate_P_Vector(int nip, int surfID, double tot, double alfa, ElemUniv &elemUniv) {
-    P.resize(4);
+    // P.resize(4,0);
     int nsip = static_cast<int>(sqrt(nip));
     Vector<double> P_surf(4);
     double jac = elemUniv.surfaces[surfID].surfaceLength / 2;
@@ -195,6 +195,10 @@ Vector<Matrix<double>> Element::getH_matrixes() const {
 
 Matrix<double> Element::getH_final() const {
     return H_final;
+}
+
+Vector<double> Element::getP() const {
+    return P;
 }
 
 int Element::getID() const {
