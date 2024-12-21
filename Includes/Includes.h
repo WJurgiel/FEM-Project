@@ -12,7 +12,9 @@
 
 
 // CONFIG
-#define DEBUG 0
+#define DEBUGINFO 0
+#define CALCULATIONS 0
+#define MULTITHREADING 0
 
 #include <iostream>
 #include <vector>
@@ -63,5 +65,23 @@ inline Vector<std::string> split(const std::string& str, char delim) {
     }
     return tokens;
 
+}
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Matrix<T>& mat) {
+    for(const auto& row : mat) {
+        for(const auto& col : row) {
+            os << col << " ";
+        }
+        os << "\n";
+    }
+    return os;
+}
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Vector<T>& vec) {
+    for(const auto& elem : vec) {
+        os << elem << " ";
+    }
+    os<<"\n";
+    return os;
 }
 #endif //INCLUDES_H

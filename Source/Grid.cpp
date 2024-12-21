@@ -22,7 +22,7 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
     std::cout << "nip: " << nip << "\n";
     FileHandler::clearOutputDirectory();
     FileHandler::initDirectories();
-#if DEBUG
+#if DEBUGINFO
     std::cout << "Grid::executeCalculations() logs\n";
 #endif
     FileHandler::clearFile("../Output/dNdXdY.txt"); // think about where to store paths
@@ -32,7 +32,9 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
         elements[elem].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
         elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
         elements[elem].calculate_H_final(nip, this->wages);
-#if DEBUG
+        elements[elem].calculate_HBC_matrix(nip, globalData.getParameter("Alfa"), m_elem_univ);
+
+#if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
 #endif
         std::string jac_path = "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elem) + ".txt";
@@ -66,7 +68,7 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
 void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi, int elementID) {
     // FileHandler::clearOutputDirectory();
     // FileHandler::initDirectories();
-#if DEBUG
+#if DEBUGINFO
     std::cout << "Grid::executeCalculations() logs\n";
 #endif
     FileHandler::clearFile("../Output/dNdXdY.txt"); // think about where to store paths
@@ -76,7 +78,7 @@ void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi
     elements[elementID].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
     elements[elementID].calculate_H_final(nip, this->wages);
 
-#if DEBUG
+#if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
 #endif
         std::string jac_path = "../Output/Jacobian_Matrices/jac_matrix_elem_" + std::to_string(elementID) + ".txt";
@@ -103,31 +105,33 @@ void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi
 
 }
 
-Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages) {
+Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_univ): m_elem_univ(elem_univ) {
     //test constructor
-    nodes.emplace_back(0, 0,0);
-    nodes.emplace_back(1, 0.025,0);
-    nodes.emplace_back(2, 0.025,0.025);
-    nodes.emplace_back(3, 0,0.025);
+    this->wages = wages;
+
+    nodes.emplace_back(0, 0, 0, true);
+    nodes.emplace_back(1, 0.025, 0, true);
+    nodes.emplace_back(2, 0.025, 0.025, true);
+    nodes.emplace_back(3, 0, 0.025, true);
     // Dla testu 2
     // nodes.emplace_back(0, 0.01,-0.01);
     // nodes.emplace_back(1, 0.025,0);
     // nodes.emplace_back(2, 0.025,0.025);
     // nodes.emplace_back(3, 0,0.025);
-
-    elements.push_back(Element(0,{0,1,2,3}));
+    globalData.setParameter("Alfa", 25);
+    elements.push_back(Element(0, {0, 1, 2, 3},this->wages));
 
     this->integrationPoints = integrationPoints;
 
-    globalData.setParameter("Conductivity",30);
 
-    this->wages = wages;
+
+
     nip = static_cast<int>(this->integrationPoints.size());
 
     assignNodesToElements();
 }
 
-Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string fileName, int normalize) {
+Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string fileName,ElemUniv& elem_univ, int normalize):m_elem_univ(elem_univ) {
     //configure integration points
     this->integrationPoints = integrationPoints;
     this->wages = wages;
@@ -181,17 +185,17 @@ Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string file
                 char comma;
                 ss >> elems[0] >> comma >> elems[1] >> comma >> elems[2] >> comma >> elems[3] >> comma >> elems[4];
 
-                elements.push_back(Element{elems[0]-normalize, Vector<int>{elems[1]-normalize,elems[2]-normalize,elems[3]-normalize,elems[4]-normalize}});
+                elements.push_back(Element{elems[0]-normalize, Vector<int>{elems[1]-normalize,elems[2]-normalize,elems[3]-normalize,elems[4]-normalize}, this->wages});
             }
-            // if (isBC) {
-            //     std::stringstream ss(line);
-            //     int bcVal;
-            //     char comma;
-            //     while (ss >> bcVal) {
-            //         bc.push_back(bcVal);
-            //         ss >> comma;
-            //     }
-            // }
+            if (isBC) {
+                std::stringstream ss(line);
+                int bcVal;
+                char comma;
+                while (ss >> bcVal) {
+                    nodes[bcVal - normalize].setBC(true);
+                    ss >> comma;
+                }
+            }
             if (!isNodeSection && !isElementSection && !isBC) {
                 int value = std::stoi(tokens[1]);
                 globalData.setParameter(tokens[0], value);

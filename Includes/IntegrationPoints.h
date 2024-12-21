@@ -88,6 +88,7 @@ private:
         {Vector<double> {0.347855, 0.652145,0.652145,0.347855}},
         {Vector<double> {0.236927, 0.478629,0.568889,0.478629,0.236927}}
     };
+
     Vector<Node> integrationPoints;
     Vector<double> wages;
 public:
@@ -96,8 +97,8 @@ public:
 
     [[nodiscard]] Vector<Node> getIP() const;
     [[nodiscard]] Vector<double> getWages() const;
+    [[nodiscard]] int getNIP() const;
+    static Vector<Node> N4Surface;
 };
-
-
 
 #endif //INTEGRATIONPOINTS_H

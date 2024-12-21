@@ -18,23 +18,39 @@ int main()
     IntegrationPoints ip(4);
     Timer timer;
     FileHandler::initDirectories();
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file1);
-    
-    ElemUniv elem_univ(FEM_grid.getIntegrationPoints(), FEM_grid.getNip());
+    ElemUniv elem_univ(ip.getIP(), ip.getNIP());
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file2, elem_univ);
+    FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
 
+    //-----test start----
+    // ElemUniv testElemUniv(ip.getIP(), ip.getNIP());
+    // Grid testGrid(ip.getIP(), ip.getWages(), testElemUniv);
+    // testGrid.executeCalculations(testElemUniv.getdN_dEta(), testElemUniv.getdN_dKsi());
+    // std::cout << testGrid;
+
+    // Assigning nodes to surface - passed
+    // int surf = Surfaces::BOTTOM;
+    // for(const auto& x: testElemUniv.surfaces) {
+    //     std::cout << surf++ << std::endl;
+    //     for(const auto& ip: x.surfaceIntegPoints) {
+    //         std::cout << ip << std::endl;
+    //     }
+    // }
+
+
+
+    // -----test end-----
+
+#if CALCULATIONS
     int elCount = FEM_grid.getElementCount();
     Vector<std::thread> threads;
     FileHandler::clearOutputDirectory();
     FileHandler::initDirectories();
     timer.start();
+#if MULTITHREADING
     {
         for(int pid = 0; pid < elCount; pid++) {
             threads.emplace_back([&FEM_grid, &elem_univ, pid]() {
-                // {
-                //     std::lock_guard<std::mutex> guard(cout_mutex);
-                //     std::cout << "[THREAD " <<pid << " ]" << "performing task for element: " << pid << "\n";
-                // }
-
                 FEM_grid.executeCalculations(
                     elem_univ.getdN_dEta(),
                     elem_univ.getdN_dKsi(),
@@ -46,15 +62,21 @@ int main()
             threads[pid].join();
         }
     }
-    // FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
+#endif
+#if MULTITHREADING
+    FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
+#endif
     timer.stop();
+#endif
 
     GlobalSystemEquation globalSystemEquation;
-    std::cout << FEM_grid;
-    aggregation(FEM_grid, globalSystemEquation);
-    std::cout << globalSystemEquation;
+    // std::cout << FEM_grid;
+    //Uncomment code below to call aggregation
+    // aggregation(FEM_grid, globalSystemEquation);
+    // std::cout << globalSystemEquation;
+    //
+    // std::cout << elem_univ;
 
-    std::cout << elem_univ;
     std::cout << timer;
     return 0;
 

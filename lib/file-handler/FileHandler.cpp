@@ -13,7 +13,7 @@ void FileHandler::saveToFile(std::string path, Element content, Vector<Jacobian>
             if(file.good()) {
                 file << "Integration point " << ip << ":\n";
                 file << vecToSave[ip];
-#if DEBUG
+#if DEBUGINFO
                 std::cout << "Jacobian matrixes saved to " << out_file_name << "\n";
 
             }else {
@@ -37,7 +37,7 @@ void FileHandler::saveToFile(std::string path, Element content, Matrix<double> m
         std::cout << e.what() << "\n";
     }
     try {
-#if DEBUG
+#if DEBUGINFO
         if(outFile.good()) {
             std::cout << "Matrix " << matrix_name << " saved to " << out_file_name << "\n";
         }else {
