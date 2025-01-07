@@ -32,6 +32,7 @@ public:
     // Always call this function in the constructor -> without it elements won't know their nodes
     void assignStartTemperature();
     void assignNodesToElements();
+    void updateNodesTemperatures(const Vector<double> t1);
     void executeCalculations(Matrix<double>&, Matrix<double>&);
     // Use when you want to execute calculations for specific element (possibly for multithreading)
     void executeCalculations(Matrix<double>&, Matrix<double>&, int elementID);
@@ -52,6 +53,7 @@ public:
     std::size_t getElementCount() const;
     Element getElement(int id) const;
     Vector<Node> getNodes() const;
+    GlobalData getGlobalData() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Grid& grid);
 };

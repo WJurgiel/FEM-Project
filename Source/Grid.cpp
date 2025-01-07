@@ -24,6 +24,13 @@ void Grid::assignNodesToElements() {
     }
 }
 
+void Grid::updateNodesTemperatures(const Vector<double> t1) {
+    for(int i = 0; i < nodes.size(); ++i) {
+        nodes[i].setTemperature(t1[i]);
+        std::cout << "Node [" << i << "] temperature : " << nodes[i] << "\n";
+    }
+}
+
 void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi) {
     std::cout << "nip: " << nip << "\n";
     FileHandler::clearOutputDirectory();
@@ -245,5 +252,9 @@ Element Grid::getElement(int id) const {
 
 Vector<Node> Grid::getNodes() const {
     return nodes;
+}
+
+GlobalData Grid::getGlobalData() const {
+    return globalData;
 }
 

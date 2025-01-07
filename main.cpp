@@ -63,7 +63,10 @@ int main()
     aggregation(FEM_grid, globalSystemEquation);
     std::cout<<globalSystemEquation;
     // globalSystemEquation.solveT();
+
+    globalSystemEquation.solveSimulation(FEM_grid);
     std::cout << timer;
+
     return 0;
 
 }

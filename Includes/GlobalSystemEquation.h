@@ -43,6 +43,7 @@ public:
         P_global[posX] += val;
     }
     void solveT();
+    void solveSimulation(Grid& grid);
     friend std::ostream& operator<<(std::ostream& os, const GlobalSystemEquation& eqn);
 };
 // GlobalSystemEquation and Grid must exist, counts the HGlobal in GlobalSystemEquation
