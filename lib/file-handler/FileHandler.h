@@ -18,6 +18,7 @@
  */
 class FileHandler {
 private:
+    static bool writeSaveTemperatureHeader;
 public:
     static void initDirectories();
     static void clearOutputDirectory();
@@ -27,6 +28,7 @@ public:
     //add flag CLEAR == false if you add two or more things to one file, (to prevent deletion previous input)
     static void saveToFile(std::string path, Element content, Vector<Jacobian> vecToSave, int nip, bool CLEAR = true);
     static void saveToFile(std::string path, Element content, Matrix<double>, std::string matrixName, int nip, bool CLEAR = true);
+    static void saveTemperatures(std::string path, Vector<double> temperatures, int nodecount, double simTime, double stepTime);
 };
 
 

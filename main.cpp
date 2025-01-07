@@ -19,25 +19,20 @@ int main()
     Timer timer;
     FileHandler::initDirectories();
     ElemUniv elem_univ(ip.getIP(), ip.getNIP());
-    Grid FEM_grid(ip.getIP(), ip.getWages(), file1, elem_univ);
-    FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
-
-    //-----test start----
-    // ElemUniv testElemUniv(ip.getIP(), ip.getNIP());
-    // Grid testGrid(ip.getIP(), ip.getWages(), testElemUniv);
-    // testGrid.executeCalculations(testElemUniv.getdN_dEta(), testElemUniv.getdN_dKsi());
-    // std::cout << testGrid;
-    // -----test end-----
+    Grid FEM_grid(ip.getIP(), ip.getWages(), file3, elem_univ);
 
 #if CALCULATIONS
     int elCount = FEM_grid.getElementCount();
+    std::cout << "DEBUG: " << elCount << " \n";
     Vector<std::thread> threads;
     FileHandler::clearOutputDirectory();
     FileHandler::initDirectories();
     timer.start();
 #if MULTITHREADING
     {
+#pragma omp parallel for
         for(int pid = 0; pid < elCount; pid++) {
+            cout_mutex.lock();
             threads.emplace_back([&FEM_grid, &elem_univ, pid]() {
                 FEM_grid.executeCalculations(
                     elem_univ.getdN_dEta(),
@@ -45,24 +40,21 @@ int main()
                     pid
                     );
             });
+            cout_mutex.unlock();
         }
         for(int pid = 0; pid < elCount; pid++) {
             threads[pid].join();
         }
     }
-#endif
-#if MULTITHREADING
+#else
     FEM_grid.executeCalculations(elem_univ.getdN_dEta(), elem_univ.getdN_dKsi());
 #endif
     timer.stop();
 #endif
 
     GlobalSystemEquation globalSystemEquation;
-    // std::cout << FEM_grid;
-    // //Uncomment code below to call aggregation
     aggregation(FEM_grid, globalSystemEquation);
-    std::cout<<globalSystemEquation;
-    // globalSystemEquation.solveT();
+    // std::cout<<globalSystemEquation;
 
     globalSystemEquation.solveSimulation(FEM_grid);
     std::cout << timer;

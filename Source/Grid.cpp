@@ -25,10 +25,13 @@ void Grid::assignNodesToElements() {
 }
 
 void Grid::updateNodesTemperatures(const Vector<double> t1) {
+    int simTime = globalData.getParameter("SimulationTime");
+    int stepTime = globalData.getParameter("SimulationStepTime");
     for(int i = 0; i < nodes.size(); ++i) {
         nodes[i].setTemperature(t1[i]);
-        std::cout << "Node [" << i << "] temperature : " << nodes[i] << "\n";
+        // std::cout << "Node [" << i << "] temperature : " << nodes[i] << "\n";
     }
+    FileHandler::saveTemperatures("../Output/SimulationTemperatures.txt", t1, nodes.size(), simTime,stepTime);
 }
 
 void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi) {
@@ -90,6 +93,8 @@ void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi
     elements[elementID].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
     elements[elementID].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
     elements[elementID].calculate_H_final(nip, this->wages);
+    elements[elementID].calculate_HBC_matrix(nip, globalData.getParameter("Alfa"), m_elem_univ);
+    elements[elementID].calculate_C_matrix(nip, globalData.getParameter("SpecificHeat"), globalData.getParameter("Density"), integrationPoints);
 
 #if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";

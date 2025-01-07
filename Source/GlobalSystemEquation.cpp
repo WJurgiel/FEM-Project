@@ -46,7 +46,8 @@ void GlobalSystemEquation::solveSimulation(Grid& grid) {
     Vector<double> t0(nodeCount, initTemp);
 
     grid.updateNodesTemperatures(t0);
-
+    std::cout << "-------------------------------------------\n";
+    std::cout << "min max for timestamp (s)\n";
     for(int step=0; step < simulationTime; step+=stepTime) {
         std::fill(rightSide.begin(), rightSide.end(), 0.0);
         for(int row = 0; row < nodeCount; row++) {
@@ -64,8 +65,9 @@ void GlobalSystemEquation::solveSimulation(Grid& grid) {
             minTemp = std::min(minTemp,t0[i]);
         }
         grid.updateNodesTemperatures(t0);
-        std::cout << "Iteration " << (step/(double)stepTime) << "<MIN: " << minTemp << "  MAX: " << maxTemp << ">\n";
+        std::cout << step << ": "  << "<MIN: " << minTemp << "  MAX: " << maxTemp << ">\n";
     }
+    std::cout << "-------------------------------------------\n";
 
 
 }
