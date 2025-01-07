@@ -4,6 +4,7 @@
 
 #include "FileHandler.h"
 // only for Vector<Jacobian> for now, template will be implemented when needed
+bool FileHandler::writeSaveTemperatureHeader = true;
 void FileHandler::saveToFile(std::string path, Element content, Vector<Jacobian> vecToSave, int nip, bool CLEAR) {
     if(CLEAR) clearFile(path);
     std::ofstream file(path, std::ios::app);
@@ -58,7 +59,26 @@ void FileHandler::saveToFile(std::string path, Element content, Matrix<double> m
     outFile.close();
 
 }
-
+void FileHandler::saveTemperatures(std::string path, Vector<double> temperatures, int nodecount, double simTime, double stepTime) {
+    std::ofstream outFile(path, std::ios::app);
+    try {
+        if(writeSaveTemperatureHeader) {
+            outFile << "Simulation time: " << simTime << ", step time: " << stepTime << "\n";
+            outFile << "Temperature for nodes (ID) in time\n";
+            for(int i = 0; i < nodecount; i++) {
+                outFile << std::setw(9) <<  "(" << i<<")" << "\t\t\t";
+            }
+            outFile << "\n";
+            writeSaveTemperatureHeader = false;
+        }
+        for(int i = 0 ; i < temperatures.size(); i++) {
+            outFile << std::setw(9) << temperatures[i] << "\t\t\t";
+        }
+        outFile << "\n";
+    }catch(std::exception& e) {
+        std::cout << e.what() << "\n";
+    }
+}
 void FileHandler::initDirectories() {
     if(!std::filesystem::exists("../Output")) {
         createDirectory("../Output");

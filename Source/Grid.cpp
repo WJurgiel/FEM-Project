@@ -6,6 +6,14 @@
 
 #include <filesystem>
 #include "FileHandler.h"
+
+void Grid::assignStartTemperature() {
+    double startTemp = globalData.getParameter("Tot");
+    for(auto& node : nodes) {
+        node.setTemperature(startTemp);
+    }
+}
+
 void Grid::assignNodesToElements() {
     for(int elem = 0; elem < elements.size(); ++elem) {
         Vector<Node> newNodes;
@@ -16,9 +24,17 @@ void Grid::assignNodesToElements() {
     }
 }
 
+void Grid::updateNodesTemperatures(const Vector<double> t1) {
+    int simTime = globalData.getParameter("SimulationTime");
+    int stepTime = globalData.getParameter("SimulationStepTime");
+    for(int i = 0; i < nodes.size(); ++i) {
+        nodes[i].setTemperature(t1[i]);
+        // std::cout << "Node [" << i << "] temperature : " << nodes[i] << "\n";
+    }
+    FileHandler::saveTemperatures("../Output/SimulationTemperatures.txt", t1, nodes.size(), simTime,stepTime);
+}
+
 void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi) {
-
-
     std::cout << "nip: " << nip << "\n";
     FileHandler::clearOutputDirectory();
     FileHandler::initDirectories();
@@ -33,6 +49,7 @@ void Grid::executeCalculations(Matrix<double>& dN_dEta, Matrix<double>& dN_dKsi)
         elements[elem].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
         elements[elem].calculate_H_final(nip, this->wages);
         elements[elem].calculate_HBC_matrix(nip, globalData.getParameter("Alfa"), m_elem_univ);
+        elements[elem].calculate_C_matrix(nip, globalData.getParameter("SpecificHeat"), globalData.getParameter("Density"), integrationPoints);
 #if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
 #endif
@@ -76,6 +93,8 @@ void Grid::executeCalculations(Matrix<double> & dN_dEta, Matrix<double> &dN_dKsi
     elements[elementID].calculate_dN_dx_dy(nip, dN_dEta, dN_dKsi);
     elements[elementID].calculate_H_matrix(nip, globalData.getParameter("Conductivity"));
     elements[elementID].calculate_H_final(nip, this->wages);
+    elements[elementID].calculate_HBC_matrix(nip, globalData.getParameter("Alfa"), m_elem_univ);
+    elements[elementID].calculate_C_matrix(nip, globalData.getParameter("SpecificHeat"), globalData.getParameter("Density"), integrationPoints);
 
 #if DEBUGINFO
         std::cout << "[---Element "  << elem << "---]\n";
@@ -119,6 +138,8 @@ Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_u
     // nodes.emplace_back(3, 0,0.025);
     globalData.setParameter("Alfa", 25);
     globalData.setParameter("Tot", 1200);
+    globalData.setParameter("SpecificHeat", 700);
+    globalData.setParameter("Density", 7800);
     elements.push_back(Element(0, {0, 1, 2, 3},this->wages));
 
     this->integrationPoints = integrationPoints;
@@ -128,6 +149,7 @@ Grid::Grid(Vector<Node> integrationPoints,Vector<double> wages, ElemUniv& elem_u
 
     nip = static_cast<int>(this->integrationPoints.size());
 
+    assignStartTemperature();
     assignNodesToElements();
 }
 
@@ -207,8 +229,9 @@ Grid::Grid(Vector<Node> integrationPoints, Vector<double> wages,std::string file
         std::cout << e.what() << std::endl;
     }
 
-    //configure Elements
+    //configure Elements and nodes
     try {
+        assignStartTemperature();
         assignNodesToElements();
     }catch(std::exception& e) {
         std::cout << e.what() << std::endl;
@@ -234,5 +257,9 @@ Element Grid::getElement(int id) const {
 
 Vector<Node> Grid::getNodes() const {
     return nodes;
+}
+
+GlobalData Grid::getGlobalData() const {
+    return globalData;
 }
 

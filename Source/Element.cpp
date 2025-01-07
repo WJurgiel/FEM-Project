@@ -69,7 +69,7 @@ void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elemuniv) {
         int firstID = (2 + _surfID > 3) ? (2 + _surfID - 4) : 2+_surfID;
         int secondID = (3 + _surfID > 3) ? (3 + _surfID - 4) : 3+_surfID;
         hasBC[_surfID] = nodes[firstID].getBC() && nodes[secondID].getBC();
-        std::cout << "HasBC[surfID = " << _surfID << "]" << hasBC[_surfID] << std::endl;
+        // std::cout << "HasBC[surfID = " << _surfID << "]" << hasBC[_surfID] << std::endl;
     }
     for(int _surfID = Surfaces::BOTTOM; _surfID < 4; _surfID++ ) {
         elemuniv.surfaces[_surfID].N = Matrix<double>(nsip, Vector<double>(4));
@@ -120,9 +120,9 @@ void Element::calculate_HBC_matrix(int nip, double alfa, ElemUniv& elemuniv) {
 
     // std::cout << "FINAL HBC MATRIX:\n " << H_BC;
     // std::cout << "FINAL H (WITHOUT HBC)\n" << H_final;
-    std::cout << "FINAL P (WITHOUT HBC)\n" << P;
+    // std::cout << "FINAL P (WITHOUT HBC)\n" << P;
     H_final = H_final + H_BC;
-    std::cout << "FINAL H\n" << H_final;
+    // std::cout << "FINAL H\n" << H_final;
 
 }
 
@@ -131,7 +131,7 @@ void Element::calculate_P_Vector(int nip, int surfID, double tot, double alfa, E
     int nsip = static_cast<int>(sqrt(nip));
     Vector<double> P_surf(4);
     double jac = elemUniv.surfaces[surfID].surfaceLength / 2;
-    std::cout << "Jaca dla P: "<< jac << "\n";
+    // std::cout << "Jaca dla P: "<< jac << "\n";
     for(int _sip = 0; _sip < nsip; _sip++) {
         Vector<double> P_sip(4);
         Vector<double> current = elemUniv.surfaces[surfID].N[_sip];
@@ -140,6 +140,35 @@ void Element::calculate_P_Vector(int nip, int surfID, double tot, double alfa, E
     }
     P_surf = alfa * jac * P_surf;
     P = P + P_surf;
+}
+
+void Element::calculate_C_matrix(int nip, double specificHeat, double density, Vector<Node>& integPoints) {
+    // calculate N in integration points
+    std::cout << "Integration points: \n";
+    std::cout << integPoints;
+    Matrix<double> N(nip, Vector<double>(4));
+    for(int _ip = 0; _ip < nip; _ip++) {
+        N[_ip][0] = 0.25 * (1-integPoints[_ip].getX()) * (1-integPoints[_ip].getY());
+        N[_ip][1] = 0.25 * (1+integPoints[_ip].getX()) * (1-integPoints[_ip].getY());
+        N[_ip][2] = 0.25 * (1+integPoints[_ip].getX()) * (1+integPoints[_ip].getY());
+        N[_ip][3] = 0.25 * (1-integPoints[_ip].getX()) * (1+integPoints[_ip].getY());
+    }
+    for(int _ip = 0; _ip < nip; _ip++) {
+        Matrix<double> C_ip(4, Vector<double>(4));
+        Vector<double> N_current = N[_ip];
+        for(int row = 0;  row < 4;  row++) {
+            for(int col = 0; col < 4; col++) {
+                C_ip[row][col] = N_current[row] * N_current[col];
+            }
+        }
+        C_ip = specificHeat * density * jacobianConstantsMatrixes[_ip].getDeterminant() * C_ip;
+
+        // H_final = H_final + (wages[ip % wages.size()]* wages[ip / wages.size()] * H_matrixes[ip]);
+        C = C + (wages[_ip%wages.size()] * wages[_ip/wages.size()] * C_ip);
+
+    }
+    // std::cout << "C matrix\n";
+    // std::cout << C << "\n";
 }
 
 void Element::calculate_H_final(int nip, Vector<double> wages) {
@@ -197,6 +226,10 @@ Vector<Matrix<double>> Element::getH_matrixes() const {
 
 Matrix<double> Element::getH_final() const {
     return H_final;
+}
+
+Matrix<double> Element::getC() const {
+    return C;
 }
 
 Vector<double> Element::getP() const {

@@ -13,7 +13,7 @@
 
 // CONFIG
 #define DEBUGINFO 0
-#define CALCULATIONS 0
+#define CALCULATIONS 1
 #define MULTITHREADING 0
 
 #include <iostream>

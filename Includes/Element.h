@@ -24,7 +24,7 @@ class Element {
     Matrix<double> H_final; // size: 4x4
     Matrix<double> H_BC; // size: 4x4
     Vector<double> P = Vector<double>(4,0); // size: 4
-
+    Matrix<double> C = Matrix<double>(4,Vector<double>(4));
 
 public:
     Element(int id, Vector<int> nodeIDs, Vector<double>& wages);
@@ -35,7 +35,7 @@ public:
     void calculate_H_final(int nip, Vector<double> wages);
     void calculate_HBC_matrix(int nip, double alfa, ElemUniv& elemUniv);
     void calculate_P_Vector(int nip, int surfID, double tot, double alfa, ElemUniv& elemUniv );
-
+    void calculate_C_matrix(int nip, double specificHeat, double density, Vector<Node>& integPoints);
     void printJacobians(int nip) const;
     void printMatrix(Matrix<double>);
     //Getters
@@ -47,6 +47,7 @@ public:
     Vector<Jacobian> getJacobianConstantsMatrixes() const;
     Vector<Matrix<double>> getH_matrixes() const;
     Matrix<double> getH_final() const;
+    Matrix<double> getC() const;
     Vector<double> getP() const;
     int getID() const;
 
